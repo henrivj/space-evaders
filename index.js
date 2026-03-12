@@ -52,41 +52,7 @@ const levels = [
 const game = new Game(canvas, spaceship, levels)
 game.start()
 
-let debugLog = []
-
-function debugEntities() {
-    const lvl = game.currentLevel
-    const asteroids = lvl.asteroidCluster.asteroids ?? []
-    const stars = lvl.starCluster.stars ?? []
-
-    debugLog.push([
-        `=== FRAME ${game.debugTimer} | LEVEL ${lvl.index} ===`,
-        `🚀 Spaceship: ${JSON.stringify(spaceship)}`,
-        `☄️ Asteroids (${asteroids.length}): ${JSON.stringify(asteroids)}`,
-        `⭐ Stars (${stars.length}): ${JSON.stringify(stars)}`,
-        ''
-    ].join('\n'))
-}
-
-function saveDebugLog() {
-    const blob = new Blob([debugLog.join('\n')], { type: 'text/plain' })
-    const a = document.createElement('a')
-    a.href = URL.createObjectURL(blob)
-    a.download = `debug_log.txt`
-    a.click()
-}
-
 function main() {
-    game.debugTimer++
-    if (game.debugTimer >= 60) {
-        game.debugTimer = 0
-        debugEntities()
-    }
-
-    if (game.isOver) {  // adjust to your actual game over flag
-        saveDebugLog()
-    }
-
     game.update()
     game.render()
     requestAnimationFrame(main)
