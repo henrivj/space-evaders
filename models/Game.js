@@ -47,7 +47,7 @@ export default class Game {
 
     update() {
         if (this.state === 'defeat' || this.state === 'victory') return
-    
+
         if (this.state === 'transition') {
             this.transition += 0.015
             if (this.transition >= 1) {
@@ -57,40 +57,48 @@ export default class Game {
                 this.state = 'playing'
             }
         }
-    
+
         if (this.state === 'playing') {
-    
+
             if (this.player.health <= 0) {
                 this.transition += 0.02
-    
+
                 if (this.transition >= 1) {
                     this.state = 'defeat'
                     this.transition = 0
                 }
             }
-    
+
             else if (this.level.isComplete(this.score)) {
+
                 if (!this.nextLevel) {
-                    this.state = 'victory'
-                } else {
+                    this.transition += 0.02
+
+                    if (this.transition >= 1) {
+                        this.state = 'victory'
+                        this.transition = 0
+                    }
+                }
+
+                else {
                     this.state = 'transition'
                     this.transition = 0
                 }
             }
         }
-    
+
         this.player.updateSprite()
         this.player.updatePosition()
-    
+
         this.level.asteroidCluster.update()
         this.level.starCluster.update()
-    
+
         if (this.state === 'transition' && this.nextLevel) {
             this.nextLevel.asteroidCluster.update()
         }
-    
+
         this.handleCollisions()
-    
+
         if (this.invFrames > 0) this.invFrames--
     }
 
