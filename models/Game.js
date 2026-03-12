@@ -16,14 +16,14 @@ export default class Game {
     }
 
     start() {
-        this.player.speed = this.level.playerSpeed
-        this.player.startControls()
+    this.player.speed = this.levels[this.levelIndex].playerSpeed
+    this.player.startControls()
 
-        window.addEventListener('keydown', e => {
-            if (e.key !== 'Enter') return
-            if (this.state === 'menu') this.state = 'playing'
-            if (this.state === 'victory' || this.state === 'defeat') this.restart()
-        })
+    window.addEventListener('keydown', e => {
+        if (e.key !== 'Enter') return
+        if (this.state === 'menu') this.state = 'playing'
+        if (this.state === 'victory' || this.state === 'defeat') this.restart()
+    })
     }
 
     restart() {
