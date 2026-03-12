@@ -15,14 +15,6 @@ export default class Game {
         this.invDuration = 90
     }
 
-    get level() {
-        return this.levels[this.levelIndex]
-    }
-
-    get nextLevel() {
-        return this.levels[this.levelIndex + 1]
-    }
-
     start() {
         this.player.speed = this.level.playerSpeed
         this.player.startControls()
@@ -40,6 +32,14 @@ export default class Game {
         this.transition = 0
         this.invFrames = 0
 
+        this.level.asteroidCluster.asteroids.forEach(asteroid => {
+            asteroid.resetPosition()
+        })
+
+        this.level.starCluster.stars.forEach(star => {
+            if (star.resetPosition) star.resetPosition()
+        })
+        
         this.player.reset()
         this.player.speed = this.level.playerSpeed
         this.state = 'playing'
@@ -105,25 +105,25 @@ export default class Game {
     handleCollisions() {
         const level = this.level
 
-        level.asteroidCluster.asteroids.forEach(a => {
-            if (a.posX + a.size < 0) {
-                this.score += a.size
-                a.resetPosition()
+        level.asteroidCluster.asteroids.forEach(asteroid => {
+            if (asteroid.posX + asteroid.size < 0) {
+                this.score += asteroid.size
+                asteroid.resetPosition()
                 return
             }
 
             if (this.invFrames > 0) return
 
-            if (this.player.collidesWith(a)) {
+            if (this.player.collidesWith(asteroid)) {
                 this.player.takeDamage()
-                a.resetPosition()
+                asteroid.resetPosition()
                 this.invFrames = this.invDuration
             }
         })
 
-        level.starCluster.stars.forEach(s => {
-            if (this.player.collidesWith(s)) {
-                s.collect(this.player, this)
+        level.starCluster.stars.forEach(star => {
+            if (this.player.collidesWith(star)) {
+                star.collect(this.player, this)
             }
         })
     }
