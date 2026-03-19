@@ -19,13 +19,13 @@ document.addEventListener('keyup', e => keysPressed[e.key] = false)
 const PLAYER_SPEED = 4
 const PLAYER_SIZE = 50
 
-const player1 = new Spaceship(PLAYER_SIZE, canvas.height / 3, PLAYER_SPEED, PLAYER_SIZE, './img/spaceship.png')
-const player2 = new Spaceship(PLAYER_SIZE, canvas.height / 3 * 2, PLAYER_SPEED, PLAYER_SIZE, './img/spaceship.png')
+const player1 = new Spaceship(PLAYER_SIZE, canvas.height / 3, PLAYER_SPEED, PLAYER_SIZE, './img/spaceship1.png')
+const player2 = new Spaceship(PLAYER_SIZE, canvas.height / 3 * 2, PLAYER_SPEED, PLAYER_SIZE, './img/spaceship2.png')
 
 const levelConfigs = [
     {
         scoreGoal: 500,
-        playerSpeed: 5,
+        playerSpeed: 7,
         clusters: [
             new Cluster(Asteroid, 5, 1.5, 2.5, 30, 90, './img/asteroid.png'),
             new Cluster(Star, 2, 0.5, 1.5, 2, 5, './img/star.png')
@@ -34,7 +34,7 @@ const levelConfigs = [
     },
     {
         scoreGoal: 1500,
-        playerSpeed: 6,
+        playerSpeed: 8.5,
         clusters: [
             new Cluster(Asteroid, 7, 2.5, 3.5, 30, 60, './img/asteroid.png'),
             new Cluster(Star, 2, 0.5, 1.5, 2, 5, './img/star.png')

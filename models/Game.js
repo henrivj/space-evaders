@@ -20,10 +20,12 @@ export default class Game {
         if (this.state === 'playing') {
             this.handlePlayerMovement()
             this.players.forEach(player => { player.update() })
+
             this.levels[this.currentLevel].clusters.forEach(cluster => {
                 cluster.update()
             });
-
+            
+            this.checkPlayerHealth()
             this.handleCurrentLevel()
             this.handlePreviousLevel()
             this.handleLevelTransition()
@@ -93,9 +95,9 @@ export default class Game {
                             player.health++
                             this.score += 1000
                         } else {
-                            player.health -= Math.trunc(entity.size)
-                            console.log(player.health)
+                            player.health -= Math.max(Math.trunc(entity.size), 0)
                         }
+
                         if (isCurrentLevel) {
                             entity.reset()
                         } else {
@@ -118,6 +120,14 @@ export default class Game {
         })
 
         level.clusters.forEach(cluster => cluster.update())
+    }
+
+    checkPlayerHealth() {
+        this.players.forEach(player => {
+            if (player.health <= 0) {
+                this.state = 'defeat'
+            }
+        })
     }
 
     handleCurrentLevel() {

@@ -3,7 +3,6 @@ import { context, canvas } from '../index.js'
 export default class Renderer {
     constructor(game) {
         this.game = game
-        this.displayHealth = []
     }
 
     render() {
@@ -35,56 +34,38 @@ export default class Renderer {
     }
 
     renderHUD() {
-        const smooth = 0.05
-        const barWidth = 300
-        const barHeight = 16
-        const marginLeft = 20
-        const marginTop = 40
-        const marginBottom = 40
+        const players = this.game.players
 
-        this.game.players.forEach((player, index) => {
-            if (this.displayHealth[index] === undefined) {
-                this.displayHealth[index] = player.health
-            }
+        for (let i = 0; i < players.length; i++) {
+            let fill = players[i].health / 500
+            if (fill < 0) fill = 0
 
-            this.displayHealth[index] += (player.health - this.displayHealth[index]) * smooth
+            const iconSize = 24
+            const barX = 20
 
-            const fill = Math.max(this.displayHealth[index] / 500, 0)
-
-            let barY = marginTop
-            if (index === 1) barY = canvas.height - marginBottom
+            let barY = canvas.height - 40
+            if (i === 0) barY = 40
 
             let color = '#33ff33'
-            if (fill < 0.5) color = '#ff9800'
             if (fill < 0.25) color = '#ff4444'
-
-            context.font = 'bold 10px "Press Start 2P", monospace'
-            context.fillStyle = '#2a7a2a'
-            context.textAlign = 'left'
-            context.fillText(`P${index + 1}`, marginLeft, barY - 8)
+            if (fill >= 0.25 && fill < 0.5) color = '#ff9800'
 
             context.fillStyle = '#0a1f0a'
-            context.fillRect(marginLeft, barY, barWidth, barHeight)
+            context.fillRect(barX, barY, 300, 16)
 
             context.fillStyle = color
             context.shadowColor = color
             context.shadowBlur = 3
-            context.fillRect(marginLeft, barY, barWidth * fill, barHeight)
-
+            context.fillRect(barX, barY, 300 * fill, 16)
             context.shadowBlur = 0
+
             context.strokeStyle = '#1a3d1a'
-            context.strokeRect(marginLeft, barY, barWidth, barHeight)
-        })
+            context.strokeRect(barX, barY, 300, 16)
 
-        const scoreY = marginTop - 10
-
-        context.font = '14px "Press Start 2P", monospace'
-        context.fillStyle = '#33ff33'
-        context.shadowColor = '#33ff33'
-        context.shadowBlur = 6
-        context.textAlign = 'center'
-        context.fillText(`${this.game.score}`, canvas.width / 2, scoreY)
-        context.shadowBlur = 0
+            const spriteX = barX + 300 * fill - iconSize / 2
+            const spriteY = barY + 8 - iconSize / 2
+            context.drawImage(players[i].sprite, spriteX, spriteY, iconSize, iconSize)
+        }
     }
 
     renderScreen(title, subtitle, prompt, color, opacity) {
