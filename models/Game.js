@@ -7,7 +7,7 @@ export default class Game {
         this.levels = levels
         this.currentLevel = 0
         this.score = 0
-        this.state = 'playing'
+        this.state = 'menu'
         this.keysPressed = keysPressed
     }
 
@@ -24,8 +24,8 @@ export default class Game {
             this.levels[this.currentLevel].clusters.forEach(cluster => {
                 cluster.update()
             });
-            
-            this.checkPlayerHealth()
+
+            this.handlePlayerDeath()
             this.handleCurrentLevel()
             this.handlePreviousLevel()
             this.handleLevelTransition()
@@ -50,6 +50,7 @@ export default class Game {
                 this.state = 'paused'
                 break
         }
+        this.keysPressed['Enter'] = false
     }
 
     handlePlayerMovement() {
@@ -122,10 +123,14 @@ export default class Game {
         level.clusters.forEach(cluster => cluster.update())
     }
 
-    checkPlayerHealth() {
+    handlePlayerDeath() {
         this.players.forEach(player => {
             if (player.health <= 0) {
                 this.state = 'defeat'
+
+                if (this.score > localStorage.getItem('highScore')) {
+                    localStorage.setItem('highScore', this.score)
+                }
             }
         })
     }
