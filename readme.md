@@ -2,7 +2,7 @@
 
 Space Evaders é um jogo 2D em JavaScript. O jogo roda em um loop controlado por `requestAnimationFrame`; a cada frame `Game.update()` trata o input, move as naves, atualiza as entidades, verifica colisões, troca de nível e checa vitória ou derrota.
 
-![gameplay](https://raw.githubusercontent.com/henrivj/space-evaders/main/img/gameplay.png)
+![gameplay](https://raw.githubusercontent.com/henrivj/space-evaders/main/public/img/gameplay.png)
 
 ## Principais componentes
 
