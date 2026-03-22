@@ -1,5 +1,6 @@
 import Asteroid from './entities/Asteroid.js';
 import Star from './entities/Star.js';
+import { canvas } from '../index.js';
 
 export default class Game {
 	constructor(players, levels, keysPressed) {
@@ -136,7 +137,6 @@ export default class Game {
 				if (entity.Alive && entity.hasPassedX(0)) {
 					if (cluster.EntityType === Asteroid && entity.Alive) {
 						this.score += Math.trunc(entity.size);
-						console.log('scored' + Math.trunc(entity.size));
 					}
 					if (isCurrentLevel) {
 						entity.reset();
