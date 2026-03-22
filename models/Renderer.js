@@ -129,8 +129,7 @@ export default class Renderer {
 	}
 
 	renderScore() {
-		const totalScoreGoal = this.game.levels[this.game.levels.length - 1].scoreGoal; // 3500
-
+		const totalScoreGoal = this.game.levels[this.game.levels.length - 1].scoreGoal;
 		const scoreBarHeight = canvas.height * SCORE.HEIGHT_RATIO;
 		const scoreBarX = canvas.width - SCORE.BAR_MARGIN - SCORE.BAR_WIDTH;
 		const scoreBarY = (canvas.height - scoreBarHeight) / 2;
@@ -143,23 +142,19 @@ export default class Renderer {
 		context.fillRect(scoreBarX, scoreBarY + scoreBarHeight - filledHeight, SCORE.BAR_WIDTH, filledHeight);
 
 		context.strokeStyle = SCORE.BORDER_COLOR;
-
-		for (let i = 0; i < this.game.levels.length - 1; i++) {
-			const tickY = scoreBarY + scoreBarHeight - (this.game.levels[i].scoreGoal / totalScoreGoal) * scoreBarHeight;
+		this.game.levels.forEach((level, index) => {
+			if (index === this.game.levels.length - 1) return;
+			const tickY = scoreBarY + scoreBarHeight - (level.scoreGoal / totalScoreGoal) * scoreBarHeight;
 			context.beginPath();
 			context.moveTo(scoreBarX, tickY);
 			context.lineTo(scoreBarX + SCORE.BAR_WIDTH, tickY);
 			context.stroke();
-		}
+		});
 
 		context.textAlign = 'center';
 		context.font = SCORE.FONT;
 		context.fillStyle = SCORE.FILL_COLOR;
-		context.fillText(
-			this.game.score,
-			scoreBarX + SCORE.BAR_WIDTH / 2,
-			scoreBarY + scoreBarHeight - filledHeight - SCORE.LABEL_OFFSET
-		);
+		context.fillText(this.game.score, scoreBarX + SCORE.BAR_WIDTH / 2, scoreBarY + scoreBarHeight - filledHeight - SCORE.LABEL_OFFSET);
 
 		context.strokeRect(scoreBarX, scoreBarY, SCORE.BAR_WIDTH, scoreBarHeight);
 	}
@@ -172,18 +167,18 @@ export default class Renderer {
 		context.fillRect(0, 0, canvas.width, canvas.height);
 
 		context.textAlign = 'center';
-		this.drawCenteredText(title, SCREEN.TITLE_FONT, titleColor, centerX, centerY + SCREEN.TITLE_Y_OFFSET);
+		context.font = SCREEN.TITLE_FONT;
+		context.fillStyle = titleColor;
+		context.fillText(title, centerX, centerY + SCREEN.TITLE_Y_OFFSET);
 
 		if (subtitle) {
-			this.drawCenteredText(subtitle, SCREEN.SUBTITLE_FONT, SCREEN.SUBTITLE_COLOR, centerX, centerY);
+			context.font = SCREEN.SUBTITLE_FONT;
+			context.fillStyle = SCREEN.SUBTITLE_COLOR;
+			context.fillText(subtitle, centerX, centerY);
 		}
 
-		this.drawCenteredText(prompt, SCREEN.PROMPT_FONT, SCREEN.PROMPT_COLOR, centerX, centerY + SCREEN.PROMPT_Y_OFFSET);
-	}
-
-	drawCenteredText(text, font, color, x, y) {
-		context.font = font;
-		context.fillStyle = color;
-		context.fillText(text, x, y);
+		context.font = SCREEN.PROMPT_FONT;
+		context.fillStyle = SCREEN.PROMPT_COLOR;
+		context.fillText(prompt, centerX, centerY + SCREEN.PROMPT_Y_OFFSET);
 	}
 }

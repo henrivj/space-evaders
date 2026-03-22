@@ -49,7 +49,17 @@ const levelConfigs = [
             new Cluster(Star,     1,  1.5, 2.5, 18, 23, 5, './img/star.png')
         ],
         background: './img/levels/level_3.jpg'
-    }
+    },
+    {
+        scoreGoal: 15000,
+        playerSpeed: 9,
+        clusters: [
+            new Cluster(Asteroid, 30, 3.5, 5.5, 80, 120, 2, './img/asteroid.png'),
+            new Cluster(Star,     1,  1.5, 2.5, 18, 23, 5, './img/star.png')
+        ],
+        background: './img/levels/level_3.jpg'
+    },
+
 ]
 
 const levels = []
