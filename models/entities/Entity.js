@@ -8,6 +8,7 @@ export default class Entity {
         this.size = size
         this.sprite = new Image()
         this.sprite.src = sprite
+        this.Alive = true
     }
 
     render() {
@@ -23,6 +24,6 @@ export default class Entity {
     }
 
     hasPassedX(posX) {
-        return this.posX + this.size < posX
+        return this.posX <= -this.size + posX
     }
 }

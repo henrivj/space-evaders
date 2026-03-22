@@ -19,36 +19,36 @@ document.addEventListener('keyup', e => keysPressed[e.key] = false)
 const PLAYER_SPEED = 4
 const PLAYER_SIZE = 50
 
-const player1 = new Spaceship(PLAYER_SIZE, canvas.height / 3, PLAYER_SPEED, PLAYER_SIZE, './img/spaceship1.png')
-const player2 = new Spaceship(PLAYER_SIZE, canvas.height / 3 * 2, PLAYER_SPEED, PLAYER_SIZE, './img/spaceship2.png')
+const player1 = new Spaceship(PLAYER_SIZE, canvas.height / 3, PLAYER_SPEED, PLAYER_SIZE, './img/spaceship0.png')
+const player2 = new Spaceship(PLAYER_SIZE, canvas.height / 3 * 2, PLAYER_SPEED, PLAYER_SIZE, './img/spaceship1.png')
 
 const levelConfigs = [
     {
-        scoreGoal: 500,
-        playerSpeed: 7,
+        scoreGoal: 2500,
+        playerSpeed: 6,
         clusters: [
-            new Cluster(Asteroid, 5, 1.5, 2.5, 30, 90, './img/asteroid.png'),
-            new Cluster(Star, 2, 0.5, 1.5, 2, 5, './img/star.png')
+            new Cluster(Asteroid, 10, 1.5, 2.5, 25, 55, 2, './img/asteroid.png'),
+            new Cluster(Star,     1,  0.8, 1.5, 25, 30, 5, './img/star.png')
         ],
-        background: './img/levels/level_1.png'
+        background: './img/levels/level_1.jpg'
     },
     {
-        scoreGoal: 1500,
-        playerSpeed: 8.5,
+        scoreGoal: 5000,
+        playerSpeed: 7.5,
         clusters: [
-            new Cluster(Asteroid, 7, 2.5, 3.5, 30, 60, './img/asteroid.png'),
-            new Cluster(Star, 2, 0.5, 1.5, 2, 5, './img/star.png')
+            new Cluster(Asteroid, 20, 2.5, 4,   55, 80, 2, './img/asteroid.png'),
+            new Cluster(Star,     1,  1,   2,   22, 27, 5, './img/star.png')
         ],
-        background: './img/levels/level_2.png'
+        background: './img/levels/level_2.jpg'
     },
     {
-        scoreGoal: 3500,
-        playerSpeed: 7,
+        scoreGoal: 10000,
+        playerSpeed: 9,
         clusters: [
-            new Cluster(Asteroid, 9, 3, 4.5, 35, 65, './img/asteroid.png'),
-            new Cluster(Star, 1, 0.5, 1.5, 2, 5, './img/star.png')
+            new Cluster(Asteroid, 30, 3.5, 5.5, 80, 120, 2, './img/asteroid.png'),
+            new Cluster(Star,     1,  1.5, 2.5, 18, 23, 5, './img/star.png')
         ],
-        background: './img/levels/level_3.png'
+        background: './img/levels/level_3.jpg'
     }
 ]
 

@@ -1,76 +1,189 @@
-import { context, canvas } from '../index.js'
+import { context, canvas } from '../index.js';
+
+const HEALTH = {
+	START_X: 20,
+	BAR_WIDTH: 300,
+	BAR_HEIGHT: 16,
+	Y_OFFSET: 40,
+	ICON_SIZE: 24,
+	LOW_THRESHOLD: 0.25,
+	MID_THRESHOLD: 0.5,
+	COLOR_LOW: '#ff4444',
+	COLOR_MID: '#ff9800',
+	COLOR_HIGH: '#33ff33',
+	BACKGROUND_COLOR: '#0a1f0a',
+	BORDER_COLOR: '#1a3d1a'
+};
+
+const SCORE = {
+	BAR_WIDTH: 20,
+	BAR_MARGIN: 20,
+	HEIGHT_RATIO: 0.6,
+	LABEL_OFFSET: 6,
+	BACKGROUND_COLOR: '#000000',
+	FILL_COLOR: '#33ff33',
+	BORDER_COLOR: '#1a3d1a',
+	FONT: '10px "Press Start 2P", monospace'
+};
+
+const SCREEN = {
+	TITLE_FONT: 'bold 64px "Press Start 2P", monospace',
+	SUBTITLE_FONT: '20px "Press Start 2P", monospace',
+	PROMPT_FONT: '14px "Press Start 2P", monospace',
+	SHADOW_BLUR: 3,
+	TITLE_Y_OFFSET: -80,
+	PROMPT_Y_OFFSET: 80,
+	SUBTITLE_COLOR: '#aaaaaa',
+	PROMPT_COLOR: '#2a7a2a'
+};
 
 export default class Renderer {
-    constructor(game) { this.game = game }
+	constructor(game) {
+		this.game = game;
+	}
 
-    render() {
-        if (this.game.state !== 'menu') this.renderGame()
+	render() {
+		context.clearRect(0, 0, canvas.width, canvas.height);
 
-        const score = `PONTUAÇÃO FINAL: ${this.game.score}`
-        switch (this.game.state) {
-            case 'paused':  this.renderScreen('JOGO PAUSADO', null,  'PRESSIONE ENTER PARA DESPAUSAR',      '#33ff33', 0.75); break
-            case 'menu':    this.renderScreen('SPACE EVADER', `MAIOR PONTUAÇÃO: ${Number(localStorage.getItem('highScore'))}`, 'PRESSIONE ENTER PARA COMEÇAR', '#33ff33', 0); break
-            case 'victory': this.renderScreen('VOCÊ VENCEU!', score, 'PRESSIONE ENTER PARA VOLTAR AO MENU', '#33ff33', 0); break
-            case 'defeat':  this.renderScreen('GAME OVER',    score, 'PRESSIONE ENTER PARA VOLTAR AO MENU', '#ff4444', 0); break
-        }
-    }
+		if (this.game.state !== 'menu') {
+			this.renderGame();
+		}
 
-    renderGame() {
-        context.clearRect(0, 0, canvas.width, canvas.height)
-        this.game.players.forEach(p => p.render())
-        this.game.levels[this.game.currentLevel].clusters.forEach(c => c.render())
-        this.renderHUD()
-    }
+		switch (this.game.state) {
+			case 'paused':
+				this.renderScreen('JOGO PAUSADO', null, 'PRESSIONE ENTER PARA DESPAUSAR', HEALTH.COLOR_HIGH, 0.75);
+				break;
+			case 'menu':
+				this.renderScreen('SPACE EVADERS', `MAIOR PONTUAÇÃO: ${Number(localStorage.getItem('highScore'))}`, 'PRESSIONE ENTER PARA COMEÇAR', HEALTH.COLOR_HIGH, 0);
+				break;
+			case 'victory':
+				this.renderScreen('VOCÊ VENCEU!', `PONTUAÇÃO FINAL: ${this.game.score}`, 'PRESSIONE ENTER PARA VOLTAR AO MENU', HEALTH.COLOR_HIGH, 0);
+				break;
+			case 'defeat':
+				this.renderScreen('GAME OVER', `PONTUAÇÃO FINAL: ${this.game.score}`, 'PRESSIONE ENTER PARA VOLTAR AO MENU', HEALTH.COLOR_LOW, 0);
+				break;
+		}
+	}
 
-    renderHUD() {
-        this.game.players.forEach((player, i) => {
-            const fill = Math.max(0, player.health / 500)
-            const barX = 20
-            const barY = i === 0 ? 40 : canvas.height - 40
-            const color = fill < 0.25 ? '#ff4444' : fill < 0.5 ? '#ff9800' : '#33ff33'
-            const iconSize = 24
+	renderGame() {
+		this.renderBackground();
+		this.renderEntities();
+		this.renderHUD();
+	}
 
-            context.fillStyle = '#0a1f0a'
-            context.fillRect(barX, barY, 300, 16)
+	renderBackground() {
+		const currentLevel = this.game.levels[this.game.currentLevel];
+		const previousLevel = this.game.levels[this.game.currentLevel - 1];
 
-            context.fillStyle = color
-            context.shadowColor = color
-            context.shadowBlur = 3
-            context.fillRect(barX, barY, 300 * fill, 16)
-            context.shadowBlur = 0
+		if (currentLevel.bgOffset > 0) {
+			currentLevel.bgOffset -= currentLevel.playerSpeed;
+			if (previousLevel) context.drawImage(previousLevel.background, -canvas.width + currentLevel.bgOffset, 0, canvas.width, canvas.height);
+		}
+		if (currentLevel.bgOffset < 0) currentLevel.bgOffset = 0;
 
-            context.strokeStyle = '#1a3d1a'
-            context.strokeRect(barX, barY, 300, 16)
+		context.drawImage(currentLevel.background, currentLevel.bgOffset, 0, canvas.width, canvas.height);
+	}
 
-            context.drawImage(player.sprite, barX + 300 * fill - iconSize / 2, barY + 8 - iconSize / 2, iconSize, iconSize)
-        })
-    }
+	renderEntities() {
+		this.game.players.forEach((player) => player.render());
 
-    renderScreen(title, subtitle, prompt, color, opacity) {
-        const cx = canvas.width / 2
-        const cy = canvas.height / 2
+		this.game.levels.forEach((level, index) => {
+			if (index <= this.game.currentLevel) {
+				level.clusters.forEach((cluster) => cluster.render());
+			}
+		});
+	}
 
-        context.fillStyle = `rgba(0,0,0,${opacity})`
-        context.fillRect(0, 0, canvas.width, canvas.height)
+	renderHUD() {
+		this.renderHealth();
+		this.renderScore();
+	}
 
-        context.textAlign = 'center'
-        context.shadowColor = color
-        context.shadowBlur = 3
+	renderHealth() {
+		const barYPositions = [HEALTH.Y_OFFSET, canvas.height - HEALTH.Y_OFFSET];
 
-        context.font = 'bold 64px "Press Start 2P", monospace'
-        context.fillStyle = color
-        context.fillText(title, cx, cy - 80)
+		this.game.players.forEach((player, playerIndex) => {
+			const fillRatio = Math.max(0, player.health / player.maxHealth);
+			let barColor = HEALTH.COLOR_HIGH;
+			if (fillRatio < HEALTH.MID_THRESHOLD) {
+				barColor = HEALTH.COLOR_MID;
+			}
+			if (fillRatio < HEALTH.LOW_THRESHOLD) {
+				barColor = HEALTH.COLOR_LOW;
+			}
 
-        if (subtitle) {
-            context.shadowBlur = 0
-            context.font = '20px "Press Start 2P", monospace'
-            context.fillStyle = '#aaaaaa'
-            context.fillText(subtitle, cx, cy)
-        }
+			const barX = HEALTH.START_X;
+			const barY = barYPositions[playerIndex];
 
-        context.shadowBlur = 0
-        context.font = '14px "Press Start 2P", monospace'
-        context.fillStyle = '#2a7a2a'
-        context.fillText(prompt, cx, cy + 80)
-    }
+			context.fillStyle = HEALTH.BACKGROUND_COLOR;
+			context.fillRect(barX, barY, HEALTH.BAR_WIDTH, HEALTH.BAR_HEIGHT);
+
+			context.fillStyle = barColor;
+			context.fillRect(barX, barY, HEALTH.BAR_WIDTH * fillRatio, HEALTH.BAR_HEIGHT);
+
+			context.strokeStyle = HEALTH.BORDER_COLOR;
+			context.strokeRect(barX, barY, HEALTH.BAR_WIDTH, HEALTH.BAR_HEIGHT);
+
+			context.drawImage(player.sprite, barX + HEALTH.BAR_WIDTH * fillRatio - HEALTH.ICON_SIZE / 2, barY + HEALTH.BAR_HEIGHT / 2 - HEALTH.ICON_SIZE / 2, HEALTH.ICON_SIZE, HEALTH.ICON_SIZE);
+		});
+	}
+
+	renderScore() {
+		const totalScoreGoal = this.game.levels[this.game.levels.length - 1].scoreGoal; // 3500
+
+		const scoreBarHeight = canvas.height * SCORE.HEIGHT_RATIO;
+		const scoreBarX = canvas.width - SCORE.BAR_MARGIN - SCORE.BAR_WIDTH;
+		const scoreBarY = (canvas.height - scoreBarHeight) / 2;
+		const filledHeight = scoreBarHeight * Math.min(this.game.score / totalScoreGoal, 1);
+
+		context.fillStyle = SCORE.BACKGROUND_COLOR;
+		context.fillRect(scoreBarX, scoreBarY, SCORE.BAR_WIDTH, scoreBarHeight);
+
+		context.fillStyle = SCORE.FILL_COLOR;
+		context.fillRect(scoreBarX, scoreBarY + scoreBarHeight - filledHeight, SCORE.BAR_WIDTH, filledHeight);
+
+		context.strokeStyle = SCORE.BORDER_COLOR;
+
+		for (let i = 0; i < this.game.levels.length - 1; i++) {
+			const tickY = scoreBarY + scoreBarHeight - (this.game.levels[i].scoreGoal / totalScoreGoal) * scoreBarHeight;
+			context.beginPath();
+			context.moveTo(scoreBarX, tickY);
+			context.lineTo(scoreBarX + SCORE.BAR_WIDTH, tickY);
+			context.stroke();
+		}
+
+		context.textAlign = 'center';
+		context.font = SCORE.FONT;
+		context.fillStyle = SCORE.FILL_COLOR;
+		context.fillText(
+			this.game.score,
+			scoreBarX + SCORE.BAR_WIDTH / 2,
+			scoreBarY + scoreBarHeight - filledHeight - SCORE.LABEL_OFFSET
+		);
+
+		context.strokeRect(scoreBarX, scoreBarY, SCORE.BAR_WIDTH, scoreBarHeight);
+	}
+
+	renderScreen(title, subtitle, prompt, titleColor, overlayOpacity) {
+		const centerX = canvas.width / 2;
+		const centerY = canvas.height / 2;
+
+		context.fillStyle = `rgba(0,0,0,${overlayOpacity})`;
+		context.fillRect(0, 0, canvas.width, canvas.height);
+
+		context.textAlign = 'center';
+		this.drawCenteredText(title, SCREEN.TITLE_FONT, titleColor, centerX, centerY + SCREEN.TITLE_Y_OFFSET);
+
+		if (subtitle) {
+			this.drawCenteredText(subtitle, SCREEN.SUBTITLE_FONT, SCREEN.SUBTITLE_COLOR, centerX, centerY);
+		}
+
+		this.drawCenteredText(prompt, SCREEN.PROMPT_FONT, SCREEN.PROMPT_COLOR, centerX, centerY + SCREEN.PROMPT_Y_OFFSET);
+	}
+
+	drawCenteredText(text, font, color, x, y) {
+		context.font = font;
+		context.fillStyle = color;
+		context.fillText(text, x, y);
+	}
 }
