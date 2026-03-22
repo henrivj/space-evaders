@@ -1,6 +1,8 @@
 # Visão geral do projeto
 Space Evaders é um jogo 2D em JavaScript. O jogo roda em um loop controlado por `requestAnimationFrame`; a cada frame `Game.update()` trata o input, move as naves, atualiza as entidades, verifica colisões, troca de nível e checa vitória ou derrota.
 
+![gameplay](./img/gameplay.png)
+
 ## Principais componentes
 - **Spaceship** – nave do jogador (herda de `Entity`), tem vida, direção e método `update()` que a move verticalmente.
 - **Asteroid** – obstáculo giratório que avança para a esquerda; pode reaparecer (`canRespawn`).
