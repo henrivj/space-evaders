@@ -12,7 +12,7 @@ export default class Star extends Entity {
 	}
 
 	render() {
-		if (this.hasPassedX(0)) return;
+		if (this.hasPassedX(-this.size)) return;
 		context.save();
 		context.translate(this.posX + this.size / 2, this.posY + this.size / 2);
 		context.rotate(this.rotation);
@@ -27,7 +27,7 @@ export default class Star extends Entity {
 	}
 
 	kill() {
-		this.Alive = false;
+		this.alive = false;
 		this.canRespawn = false;
 		this.posX = -this.size;
 	}

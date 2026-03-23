@@ -8,7 +8,7 @@ export default class Entity {
 		this.size = size;
 		this.sprite = new Image();
 		this.sprite.src = sprite;
-		this.Alive = true;
+		this.alive = true;
 	}
 
 	render() {

@@ -19,7 +19,7 @@ export default class Cluster {
 			const size = Math.random() * (this.maxSize - this.minSize) + this.minSize;
 			const speed = Math.random() * (this.maxSpeed - this.minSpeed) + this.minSpeed;
 
-			const posX = (canvas.width + 1) * this.spawnOffset + i * canvas.width * Math.random();
+			const posX = canvas.width * this.spawnOffset + i * canvas.width * Math.random();
 			const posY = Math.random() * (canvas.height - size);
 
 			entities.push(new this.EntityType(posX, posY, speed, size, this.sprite));

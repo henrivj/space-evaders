@@ -27,7 +27,7 @@ export default class Asteroid extends Entity {
 	}
 
 	kill() {
-		this.Alive = false;
+		this.alive = false;
 		this.canRespawn = false;
 		this.posX = -this.size;
 	}

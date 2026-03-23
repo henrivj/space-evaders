@@ -8,9 +8,9 @@ export default class Spaceship extends Entity {
 
 	update() {
 		this.posY += this.speed * this.direction;
-		// da loop na tela
-		if (this.posY < 0 - this.size / 2) this.posY = canvas.height + this.size / 2;
-		if (this.posY > canvas.height + this.size / 2) this.posY = 0 - this.size / 2;
+
+		if (this.posY < -this.size / 2) this.posY = canvas.height - this.size / 2;
+		if (this.posY > canvas.height - this.size / 2) this.posY = -this.size / 2;
 	}
 
 	reset(index) {

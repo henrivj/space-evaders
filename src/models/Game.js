@@ -120,12 +120,12 @@ export default class Game {
 				this.players.forEach((player) => {
 					if (player.collidesWith(entity)) {
 						if (cluster.EntityType === Star) {
-							player.health++;
+							player.health = Math.min(player.health + Math.trunc(entity.size * cluster.spawnOffset), player.maxHealth);
 							this.score += 1000;
 						} else {
-							player.health -= Math.max(Math.trunc(entity.size), 0);
+							player.health = Math.max(player.health - Math.trunc(entity.size), 0);
 						}
-
+	
 						if (isCurrentLevel) {
 							entity.reset();
 						} else {
@@ -133,9 +133,9 @@ export default class Game {
 						}
 					}
 				});
-
-				if (entity.Alive && entity.hasPassedX(0)) {
-					if (cluster.EntityType === Asteroid && entity.Alive) {
+	
+				if (entity.alive && entity.hasPassedX(0)) {
+					if (cluster.EntityType === Asteroid && entity.alive) {
 						this.score += Math.trunc(entity.size);
 					}
 					if (isCurrentLevel) {
@@ -146,7 +146,7 @@ export default class Game {
 				}
 			});
 		});
-
+	
 		level.clusters.forEach((cluster) => cluster.update());
 	}
 
