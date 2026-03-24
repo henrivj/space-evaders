@@ -104,7 +104,7 @@ const levelConfigs = [
         "/img/star.png"
       ),
     ],
-    background: "/img/levels/level_1.jpg",
+    background: "/img/levels/level_1.png",
   },
   {
     scoreGoal: LEVEL2_SCORE_GOAL,
@@ -131,7 +131,7 @@ const levelConfigs = [
         "/img/star.png"
       ),
     ],
-    background: "/img/levels/level_2.jpg",
+    background: "/img/levels/level_2.png",
   },
   {
     scoreGoal: LEVEL3_SCORE_GOAL,
@@ -158,7 +158,7 @@ const levelConfigs = [
         "/img/star.png"
       ),
     ],
-    background: "/img/levels/level_3.jpg",
+    background: "/img/levels/level_3.png",
   },
 ];
 

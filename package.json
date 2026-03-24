@@ -22,7 +22,7 @@
 		"url": "https://github.com/henrivj/space-evaders/issues"
 	},
 	"homepage": "https://github.com/henrivj/space-evaders#readme",
-	"devDependencies": {
+	"dependencies": {
 		"vite": "^8.0.1"
 	}
 }
