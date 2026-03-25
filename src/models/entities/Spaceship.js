@@ -2,7 +2,7 @@ import Entity from './Entity.js';
 import { canvas } from '../../index.js';
 
 export default class Spaceship extends Entity {
-	maxHealth = 200;
+	maxHealth = 150;
 	health = this.maxHealth;
 	direction = 0;
 

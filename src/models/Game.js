@@ -26,7 +26,6 @@ export default class Game {
 		this.players.forEach((player, index) => {
 			player.reset(index);
 			player.health = player.maxHealth;
-			player.speed = this.levels[this.currentLevel].playerSpeed;
 		});
 	}
 
@@ -105,7 +104,6 @@ export default class Game {
 		if (this.levels[this.currentLevel + 1]) {
 			this.currentLevel++;
 			this.levels[this.currentLevel].bgOffset = canvas.width;
-			this.players.forEach((player) => (player.speed = this.levels[this.currentLevel].playerSpeed));
 		} else {
 			this.state = 'victory';
 			if (this.score > localStorage.getItem('highScore')) {
@@ -125,7 +123,7 @@ export default class Game {
 						} else {
 							player.health = Math.max(player.health - Math.trunc(entity.size), 0);
 						}
-	
+
 						if (isCurrentLevel) {
 							entity.reset();
 						} else {
@@ -133,7 +131,7 @@ export default class Game {
 						}
 					}
 				});
-	
+
 				if (entity.alive && entity.hasPassedX(0)) {
 					if (cluster.EntityType === Asteroid && entity.alive) {
 						this.score += Math.trunc(entity.size);
@@ -146,7 +144,7 @@ export default class Game {
 				}
 			});
 		});
-	
+
 		level.clusters.forEach((cluster) => cluster.update());
 	}
 

@@ -19,7 +19,7 @@ Space Evaders é um jogo 2D em JavaScript. O jogo roda em um loop controlado por
 - `models/Game.js` – gerencia o ciclo de jogo, estados (`menu`, `playing`, `paused`, `victory`, `defeat`), pontuação e transição de níveis.
 - `models/Renderer.js` – desenha fundo, entidades e HUD (barra de vida e barra de pontuação) usando **Canvas 2D**.
 - `models/Cluster.js` – agrupa um tipo de entidade (`Asteroid` ou `Star`) e gera um conjunto com velocidade e tamanho aleatórios.
-- `models/Level.js` – define objetivo de pontuação, velocidade da nave e clusters; controla o deslocamento do background na troca de nível.
+- `models/Level.js` – define objetivo de pontuação, velocidade das entidades dos clusters; controla o deslocamento do background na troca de nível.
 - `models/entities/` – guarda todas as entidades que extendem `Entity`.
 - `img/` – sprites e imagens de fundo.
 

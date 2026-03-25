@@ -39,7 +39,7 @@ export default class Renderer {
 		const previousLevel = this.game.levels[this.game.currentLevel - 1];
 
 		if (currentLevel.bgOffset > 0 && this.game.state === 'playing') {
-			currentLevel.bgOffset -= currentLevel.playerSpeed;
+			currentLevel.bgOffset -= (this.game.players[0].speed + this.game.players[1].speed) / 2;
 			if (previousLevel) context.drawImage(previousLevel.background, -canvas.width + currentLevel.bgOffset, 0, canvas.width, canvas.height);
 		}
 		if (currentLevel.bgOffset < 0) currentLevel.bgOffset = 0;
