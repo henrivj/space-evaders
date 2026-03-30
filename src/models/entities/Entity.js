@@ -1,13 +1,14 @@
 import { context } from '../../index.js';
 
 export default class Entity {
-	constructor(posX, posY, speed, size, sprite) {
+	constructor(posX, posY, speed, size, spawnOffset, sprite) {
 		this.posX = posX;
 		this.posY = posY;
 		this.speed = speed;
 		this.size = size;
 		this.sprite = new Image();
 		this.sprite.src = sprite;
+		this.spawnOffset = spawnOffset;
 		this.alive = true;
 	}
 

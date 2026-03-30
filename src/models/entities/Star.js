@@ -22,7 +22,7 @@ export default class Star extends Entity {
 
 	reset() {
 		if (!this.canRespawn) return;
-		this.posX = canvas.width + (canvas.width * Math.random()) / 2;
+		this.posX = canvas.width * this.spawnOffset + (canvas.width * Math.random()) / 2;
 		this.posY = Math.random() * (canvas.height - this.size);
 	}
 

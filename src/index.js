@@ -16,26 +16,23 @@ const keysPressed = {};
 document.addEventListener('keydown', (e) => (keysPressed[e.key] = true));
 document.addEventListener('keyup', (e) => (keysPressed[e.key] = false));
 
-const PLAYER_SIZE = 50;
-const PLAYER_SPEED = 6;
-
-const player1 = new Spaceship(PLAYER_SIZE, canvas.height / 3, PLAYER_SPEED, PLAYER_SIZE, '/img/spaceship0.png');
-const player2 = new Spaceship(PLAYER_SIZE, (canvas.height / 3) * 2, PLAYER_SPEED, PLAYER_SIZE, '/img/spaceship1.png');
+const player1 = new Spaceship(50, canvas.height / 3, 7.5, 50, 1, '/img/spaceship0.png');
+const player2 = new Spaceship(50, (canvas.height / 3) * 2, 7.5, 50, 1, '/img/spaceship1.png');
 
 const levelConfigs = [
 	{
 		scoreGoal: 2500,
-		clusters: [new Cluster(Asteroid, 10, 1.5, 2.5, 25, 55, 2, '/img/asteroid.png'), new Cluster(Star, 1, 0.8, 1.5, 25, 30, 5, '/img/star.png')],
+		clusters: [new Cluster(Asteroid, 10, 6, 7, 25, 50, 2, '/img/asteroid.png'), new Cluster(Star, 0, 0, 0, 0, 0, 0, '/img/star.png')],
 		background: '/img/levels/level_1.png'
 	},
 	{
 		scoreGoal: 5000,
-		clusters: [new Cluster(Asteroid, 20, 2.5, 4, 55, 80, 2, '/img/asteroid.png'), new Cluster(Star, 1, 1, 2, 22, 27, 5, '/img/star.png')],
+		clusters: [new Cluster(Asteroid, 15, 7, 8, 25, 75, 2, '/img/asteroid.png'), new Cluster(Star, 1, 5, 10, 30, 40, 5, '/img/star.png')],
 		background: '/img/levels/level_2.png'
 	},
 	{
 		scoreGoal: 10000,
-		clusters: [new Cluster(Asteroid, 30, 3.5, 5.5, 80, 120, 2, '/img/asteroid.png'), new Cluster(Star, 1, 1.5, 2.5, 18, 23, 5, '/img/star.png')],
+		clusters: [new Cluster(Asteroid, 20, 7, 8, 50, 100, 2, '/img/asteroid.png'), new Cluster(Star, 2, 10, 15, 35, 40, 5, '/img/star.png')],
 		background: '/img/levels/level_3.png'
 	}
 ];

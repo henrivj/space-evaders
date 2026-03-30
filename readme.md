@@ -1,75 +1,152 @@
-# Visão geral do projeto
+Perfeito! Aqui está o README atualizado em **Markdown (.md)** pronto para usar:
 
-Space Evaders é um jogo 2D em JavaScript. O jogo roda em um loop controlado por `requestAnimationFrame`; a cada frame `Game.update()` trata o input, move as naves, atualiza as entidades, verifica colisões, troca de nível e checa vitória ou derrota.
+```markdown
+# Space Evaders
 
 ![gameplay](https://raw.githubusercontent.com/henrivj/space-evaders/main/public/img/gameplay.png)
 
-## Principais componentes
+- **Desenvolvedor:** Henrique Vieira Justus
 
-- **Spaceship** – nave do jogador (herda de `Entity`), tem vida, direção e método `update()` que a move verticalmente.
-- **Asteroid** – obstáculo giratório que avança para a esquerda; pode reaparecer (`canRespawn`).
-- **Star** – item colecionável que aumenta vida e pontuação, parecido com asteroide logicamente.
-- **Entity** – classe base com posição, velocidade, tamanho, renderização e detecção de colisão.
+---
 
-## Estrutura de arquivos
+## 2. Visão Geral do Sistema
 
-- `index.html` – contém o `<canvas>` e importa `index.js`.
-- `index.css` – estilo com fonte pixelada e tons de verde.
-- `index.js` – cria o canvas, instancia `Game`, carrega níveis e captura teclado em `keysPressed`.
-- `models/Game.js` – gerencia o ciclo de jogo, estados (`menu`, `playing`, `paused`, `victory`, `defeat`), pontuação e transição de níveis.
-- `models/Renderer.js` – desenha fundo, entidades e HUD (barra de vida e barra de pontuação) usando **Canvas 2D**.
-- `models/Cluster.js` – agrupa um tipo de entidade (`Asteroid` ou `Star`) e gera um conjunto com velocidade e tamanho aleatórios.
-- `models/Level.js` – define objetivo de pontuação, velocidade das entidades dos clusters; controla o deslocamento do background na troca de nível.
-- `models/entities/` – guarda todas as entidades que extendem `Entity`.
-- `img/` – sprites e imagens de fundo.
+### Descrição
 
-## Sistemas internos
+Space Evaders é um jogo 2D em JavaScript que roda diretamente no navegador usando a API Canvas. O jogador controla naves espaciais e deve sobreviver a obstáculos enquanto coleta itens para aumentar a pontuação.
 
-### Colisão
+### Objetivo
 
-`Entity.collidesWith(other)` calcula a distância entre centros e compara com a soma dos raios.
+O objetivo do jogo é completar 3 fases consecutivas, evitando colisões com asteroides e coletando estrelas para aumentar a pontuação e recuperar vida, até alcançar a vitória final.
 
-### Spawn
+### Tema
 
-`Cluster.generateEntities()` cria entidades fora da tela à direita e as espalha verticalmente. `drain()` desativa o respawn ao final do nível; `reset()` re-gera as entidades quando o nível recomeça.
+Corrida espacial: os jogadores pilotam naves evitando obstáculos e coletando estrelas, enfrentando dificuldade crescente e cenários diferentes a cada fase.
 
-### Entrada
+### Instruções de Jogabilidade
 
-`index.js` registra `keydown`/`keyup` em `keysPressed` (W, S, ArrowUp, ArrowDown, Enter). `Game.handlePlayerMovement()` lê esses flags e ajusta a direção das naves.
+- **Movimento do jogador:**
+  - Player 1: `W` (cima), `S` (baixo)
+  - Player 2: `ArrowUp` (cima), `ArrowDown` (baixo)
+- **Coletáveis:**
+  - **Estrela**: aumenta vida e concede +1000 pontos
+- **Obstáculos:**
+  - **Asteroide**: reduz a vida da nave ao colidir, gera pontuação baseada no tamanho
 
-## Renderização
+### Especificações Técnicas
 
-O jogo usa **Canvas 2D** (`context`). `Renderer.render()` limpa o canvas e faz a renderização através de:
+- **Sistema de pontuação:** Colisão com estrelas (+1000), asteroides dão pontos de acordo com o tamanho
+- **Sistema de vidas:** Cada nave começa com 3 vidas; colisões com asteroides reduzem 1 vida
+- **Progressão de fases:** 3 fases, aumento de velocidade e quantidade de obstáculos, fundos diferentes
+- **Loop de jogo:** Controlado via `requestAnimationFrame()` garantindo 60 FPS
+- **Tela de HUD:** Mostra barra de vida e barra de pontuação proporcional à meta da fase
 
-- `renderGame()` – fundo, entidades e HUD.
-- `renderScreen()` – telas de menu, pausa, vitória e derrota com textos centralizados.
+### Regras de Negócio
 
-HUD inclui barra de vida (cores variam conforme fração de vida) e barra de pontuação (preenchimento proporcional ao objetivo final).
+1. **Dificuldade Progressiva (RN01):** A cada fase, a velocidade e quantidade de inimigos aumentam
+2. **Troca de Cenário (RN02):** Cada fase possui fundo diferente para indicar evolução
+3. **Vitória (RN03):** O jogador vence apenas ao completar a terceira fase com pelo menos 1 vida
+4. **Manual de Instruções (RN04):** Tela explicando teclas de comando, sistema de pontuação e coletáveis
 
-## Pontuação
+### Telas do jogo
 
-Em `Game.processLevel`:
+- Menu Inicial
+- Tela de Jogo
+- Tela de Pausa
+- Tela de Vitória
+- Tela de Derrota
+- Tela "Sobre" com dados do desenvolvedor e do orientador
 
-- Colisão com `Star` concede +1000 pontos e cura a nave.
-- Colisão com `Asteroid` reduz vida e adiciona pontos baseados no tamanho (`Math.trunc(entity.size)`).
-- Quando o asteroide sai pela esquerda (`hasPassedX`), ele gera pontuação adicional antes de ser resetado ou eliminado, dependendo se o nível ainda está ativo.
+---
 
-## Fluxo de níveis
+## 3. Requisitos Funcionais
 
-Ao completar o objetivo (`Level.isComplete`), `Game.handleLevelTransition()` drena o nível atual, avança para o próximo, ajusta `bgOffset` e a velocidade da nave. Quando não há mais níveis, o estado muda para `victory`.
+| Código | Requisito                                                    |
+| ------ | ------------------------------------------------------------ |
+| RF01   | Movimentação vertical das naves                              |
+| RF02   | Sistema de vidas para cada jogador                           |
+| RF03   | Sistema de pontuação baseado em colisões e obstáculos        |
+| RF04   | Itens colecionáveis que aumentam pontuação e vida            |
+| RF05   | Progressão automática de 3 fases com dificuldade crescente   |
+| RF06   | Interface com telas de menu, jogo, vitória/derrota e "Sobre" |
 
-O jogo roda em um loop simples controlado por `requestAnimationFrame()`. A cada frame o `Game.update()` trata input, move naves, atualiza entidades, verifica colisões, troca de nível e checa vitória/derrota. O tempo avança implicitamente; a velocidade dos objetos (`speed`) está em pixels por frame.
+---
 
-Os objetos principais são classes em `models/entities`:
+## 4. Requisitos Não Funcionais
 
-- `Spaceship` (herda de `Entity`): representa a nave do jogador, tem `health`, `direction` e `update()` que o move verticalmente.
-- `Asteroid` (herda de `Entity`): obstáculo que gira, avança em direção ao player e pode ser respawnado (`canRespawn`).
-- `Star` (herda de `Entity`): coleta que aumenta vida e pontuação, quase igual ao asteroide.
-- `Entity` fornece `posX`, `posY`, `size`, `speed`, `render()`, `collidesWith()` e `hasPassedX()`.
+| Código | Requisito                                          |
+| ------ | -------------------------------------------------- |
+| RNF01  | Desenvolvido em JavaScript puro (ES6+)             |
+| RNF02  | Portável, roda diretamente em navegadores modernos |
+| RNF03  | Interface projetada para resolução de 1920x1080 px |
+| RNF04  | Desempenho consistente com 60 FPS usando Canvas 2D |
 
-## Notas
+---
 
-- A lógica de pontuação está em `Game.processLevel`. Ao colidir, estrelas dão +1000 e aumentam vida; asteroides dão pontos (e dano) baseados no tamanho (`Math.trunc(entity.size)`).
-- Ao passar da esquerda da tela (`hasPassedX`), asteroides que ainda estão vivos aumentam a pontuação e são resetados ou mortos dependendo se o nível está ativo.
-- A transição de nível ajusta `bgOffset` e velocidade da nave; ao terminar o último nível o estado vira `victory`.
-- O jogo provavelmente não é o mais performático (o mais difícil é manter os asteroides do nível anterior vivos até saírem da tela para não sumirem na frente do usuário — por isso todos os níveis anteriores são processados com `processLevel()`), mas não há risco de memory leak em sessões longas.
+## 5. Estrutura de Arquivos
+```
+
+/public
+/img
+/levels
+level_1.png
+level_2.png
+level_3.png
+spaceship0.png
+spaceship1.png
+asteroid.png
+star.png
+index.html
+index.css
+index.js
+/models
+Game.js
+Renderer.js
+Level.js
+Cluster.js
+/entities
+Entity.js
+Spaceship.js
+Asteroid.js
+Star.js
+README.md
+
+````
+
+---
+
+## 6. Instruções de Instalação e Execução
+
+1. **Clonagem do repositório:**
+```bash
+git clone https://github.com/henrivj/space-evaders.git
+````
+
+2. **Instalação de dependências:**
+
+```bash
+npm install
+```
+
+3. **Execução do projeto:**
+
+- Abra `index.html` no navegador **ou** rode um servidor local, ex:
+
+```bash
+npx serve .
+```
+
+4. **Link de produção:**
+   [Space Evaders Online](https://vercel-link-do-jogo)
+
+---
+
+## 7. Créditos
+
+- Desenvolvedor: Henrique VJ
+- Orientador: [Nome do Professor]
+- Sprites e assets: Criados pelo desenvolvedor ou obtidos de fontes livres
+
+```
+
+```
