@@ -1,6 +1,3 @@
-Perfeito! Aqui está o README atualizado em **Markdown (.md)** pronto para usar:
-
-```markdown
 # Space Evaders
 
 ![gameplay](https://raw.githubusercontent.com/henrivj/space-evaders/main/public/img/gameplay.png)
@@ -143,10 +140,5 @@ npx serve .
 
 ## 7. Créditos
 
-- Desenvolvedor: Henrique VJ
-- Orientador: [Nome do Professor]
-- Sprites e assets: Criados pelo desenvolvedor ou obtidos de fontes livres
-
-```
-
-```
+- Desenvolvedor: Henrique Vieira Justus
+- Orientador: Carlos Robeto da Silva Filho

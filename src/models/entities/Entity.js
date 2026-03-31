@@ -6,9 +6,9 @@ export default class Entity {
 		this.posY = posY;
 		this.speed = speed;
 		this.size = size;
+		this.spawnOffset = spawnOffset;
 		this.sprite = new Image();
 		this.sprite.src = sprite;
-		this.spawnOffset = spawnOffset;
 		this.alive = true;
 	}
 
