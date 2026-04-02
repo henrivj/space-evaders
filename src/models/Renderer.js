@@ -9,7 +9,10 @@ export default class Renderer {
 		context.clearRect(0, 0, canvas.width, canvas.height);
 
 		if (this.game.state !== 'menu') {
-			this.renderGame();
+			this.renderBackground();
+			this.renderEntities();
+			this.renderHealth();
+			this.renderScore();
 		}
 
 		switch (this.game.state) {
@@ -26,12 +29,6 @@ export default class Renderer {
 				this.renderScreen('GAME OVER', `PONTUAÇÃO FINAL: ${this.game.score}`, 'PRESSIONE ENTER PARA VOLTAR AO MENU', '#ff4444', 0);
 				break;
 		}
-	}
-
-	renderGame() {
-		this.renderBackground();
-		this.renderEntities();
-		this.renderHUD();
 	}
 
 	renderBackground() {
@@ -55,11 +52,6 @@ export default class Renderer {
 				level.clusters.forEach((cluster) => cluster.render());
 			}
 		});
-	}
-
-	renderHUD() {
-		this.renderHealth();
-		this.renderScore();
 	}
 
 	renderHealth() {
@@ -118,11 +110,11 @@ export default class Renderer {
 		context.strokeRect(scoreBarX, scoreBarY, 20, scoreBarHeight);
 	}
 
-	renderScreen(title, subtitle, prompt, titleColor, overlayOpacity) {
+	renderScreen(title, subtitle, prompt, titleColor, opacity) {
 		const centerX = canvas.width / 2;
 		const centerY = canvas.height / 2;
 
-		context.fillStyle = `rgba(0,0,0,${overlayOpacity})`;
+		context.fillStyle = `rgba(0,0,0,${opacity})`;
 		context.fillRect(0, 0, canvas.width, canvas.height);
 
 		context.textAlign = 'center';

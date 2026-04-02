@@ -14,6 +14,9 @@ export default class Spaceship extends Entity {
 	}
 
 	reset(index) {
+		this.health = this.maxHealth
+		this.direction = 0
+		
 		if (index === 0) this.posY = canvas.height / 3;
 		else if (index === 1) this.posY = (canvas.height / 3) * 2;
 	}
