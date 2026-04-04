@@ -23,8 +23,4 @@ export default class Entity {
 		// se a distancia dos centros for menor que a soma dos raios, colide
 		return distanceX ** 2 + distanceY ** 2 < combinedRadius ** 2;
 	}
-
-	render() {
-		context.drawImage(this.sprite, this.position.x, this.position.y, this.size, this.size);
-	}
 }

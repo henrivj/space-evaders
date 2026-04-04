@@ -1,3 +1,5 @@
+import Cluster from './models/Cluster.js';
+import Asteroid from './models/entities/Asteroid.js';
 import { Spaceship } from './models/entities/Spaceship.js';
 
 import Game from './models/Game.js';
@@ -24,7 +26,34 @@ const players = [
 	new Spaceship(spaceshipSize, (canvas.height / 3 * 2) - (spaceshipSize / 2), spaceshipSize, 1, './img/spaceship1.png')
 ];
 
-const game = new Game(players);
+const levels = [
+	{
+		index: 0,
+		scoreGoal: 2500,
+		clusters: [
+			new Cluster(Asteroid, 4, 8, 40, 60, 4, 6, './img/asteroid.png')
+		],
+		background: './img/levels/level_1.png'
+	},
+	{
+		index: 1,
+		scoreGoal: 5000,
+		clusters: [
+			new Cluster(Asteroid, 4, 8, 40, 60, 4, 6, './img/asteroid.png')
+		],
+		background: './img/levels/level_2.png'
+	},
+	{
+		index: 2,
+		scoreGoal: 10000,
+		clusters: [
+			new Cluster(Asteroid, 4, 8, 40, 60, 4, 6, './img/asteroid.png')
+		],
+		background: './img/levels/level_3.png'
+	},
+];
+
+const game = new Game(players, levels);
 const renderer = new Renderer(game);
 
 function main() {

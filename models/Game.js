@@ -1,11 +1,65 @@
+// Game.js
 import { keysPressed } from '../index.js';
+import Level from './Level.js';
 
 export default class Game {
-	constructor(players) {
+	constructor(players, levels) {
 		this.players = players;
+		this.levels = this.generateLevels(levels);
+		this.currentLevel = 0;
 	}
 
-	handlePlayerCollision() {
+	generateLevels(levels) {
+		const generatedLevels = [];
+		levels.forEach((level) => {
+			generatedLevels.push(new Level(level.index, level.scoreGoal, level.clusters, level.background));
+		});
+		return generatedLevels;
+	}
+
+	resetPassedEntities() {
+		this.levels.forEach(level => {
+			level.clusters.forEach(cluster => {
+				cluster.resetPassedEntities()
+			})
+		})
+	}
+
+	drainPreviousLevels() {
+		let score = 0;
+		this.players.forEach(player => {
+			score += player.score / this.players.length;
+		})
+
+		this.levels.forEach((level) => {
+			if (level.isComplete(score)) level.drainClusters();
+		});
+	}
+
+	handlePlayerWallCollision() {
+		this.players.forEach(player => {
+			const halfSize = player.size / 2;
+
+			// cima/baixo
+			if (player.position.y < -halfSize) {
+				player.position.y += canvas.height;
+			} else if (player.position.y > canvas.height - halfSize) {
+				player.position.y -= canvas.height;
+			}
+
+			// esquerda/direita
+			if (player.position.x <= 0) {
+				player.position.x = 0;
+				player.velocity.x = -player.velocity.x;
+			} else if (player.position.x >= canvas.width - player.size) {
+				player.position.x = canvas.width - player.size;
+				player.velocity.x = -player.velocity.x;
+			}
+		});
+	}
+
+
+	handlePlayerPlayerCollision() {
 		const [p1, p2] = this.players;
 		if (!p1.collidesWith(p2)) return;
 
@@ -44,13 +98,38 @@ export default class Game {
 		});
 	}
 
-	handlePlayer() {
+	updatePlayer() {
 		this.handlePlayerMovement();
-		this.handlePlayerCollision();
+		this.handlePlayerPlayerCollision();
+		this.handlePlayerWallCollision()
+		this.players.forEach((p) => p.update());
+	}
+
+	updateClusters() {
+		this.levels.forEach((level, index) => {
+			if (index > this.currentLevel) return;
+			level.updateClusters()
+		});
+	}
+
+	updateLevelIndex() {
+		let score = 0;
+		this.players.forEach(player => {
+			score += player.score / this.players.length;
+		})
+
+		this.levels.forEach((level) => {
+			if (!level.isComplete(score)) return;
+			this.currentLevel = level.index + 1;
+		});
 	}
 
 	update() {
-		this.handlePlayer();
-		this.players.forEach((p) => p.update());
+		this.updateLevelIndex();
+		this.updateClusters();
+		this.updatePlayer();
+
+		this.drainPreviousLevels()
+		this.resetPassedEntities()
 	}
 }

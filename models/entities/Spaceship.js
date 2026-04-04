@@ -2,6 +2,7 @@ import { context } from '../../index.js';
 import Entity from './Entity.js';
 
 export class Spaceship extends Entity {
+	score = 0
 	direction = { x: 0, y: 0 };
 	velocity = { x: 0, y: 0 };
 	maxHealth = 100;
