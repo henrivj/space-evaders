@@ -1,0 +1,153 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+:root {
+    --black: #000000;
+    --white: #ffffff;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--black);
+    color: var(--white);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.85rem; 
+    line-height: 1.6;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    width: 100vw;
+    height: 100vh;
+}
+
+canvas {
+    border: 2px solid var(--white);
+    background-color: var(--black);
+    max-width: 100%;
+    height: auto;
+}
+
+aside {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: fit-content;
+    height: fit-content;
+    padding: 1.75rem 1.5rem;
+    border: 2px solid var(--white);
+    background-color: var(--black);
+}
+
+section {
+    margin-bottom: 2.25rem;
+}
+
+section h2 {
+    font-size: 1rem;
+    text-align: center;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 2px dashed var(--white);
+}
+
+.mission-list {
+    list-style: none;
+}
+
+.mission-list li {
+    margin-bottom: 0.75rem;
+}
+
+.controls-grid {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    align-items: center;
+    row-gap: 1.5rem;
+    column-gap: 1.5rem;
+}
+
+.controls-grid p {
+    margin: 0;
+}
+
+.controls-wrapper {
+    justify-self: center;
+}
+
+.key-cluster {
+    display: grid;
+    grid-template-columns: repeat(3, max-content);
+    gap: 0.4rem;
+}
+
+.key-up {
+    grid-column: 2;
+}
+
+.key-left {
+    grid-column: 1;
+}
+
+.key-row {
+    display: flex;
+    gap: 0.4rem;
+}
+
+.key {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid var(--white);
+    padding: 0.4rem 0.75rem;
+    background-color: var(--black);
+    font-size: 0.75rem; 
+    cursor: pointer;
+    box-shadow: 3px 3px 0px var(--white);
+    transform: translate(0px, 0px);
+    transition: all 0.1s ease-in-out;
+}
+
+.key.key-square {
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+}
+
+.key.key-down { /* pressiona a tecla no eventlistener do index*/
+    box-shadow: 0px 0px 0px transparent;
+    transform: translate(3px, 3px); 
+}
+
+.arrow {
+    font-family: Impact, sans-serif;
+    font-weight: 900;
+    font-size: 1.3rem; 
+}
+
+footer {
+    text-align: center;
+    font-size: 0.75rem;
+    margin-top: 1.25rem;
+}
+
+footer a {
+    color: var(--white);
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+}
+
+footer a:hover {
+    border-bottom: 2px solid var(--white);
+}
+
+@media screen and (max-width: 1400px) {
+    aside {
+        display: none;
+    }
+}
