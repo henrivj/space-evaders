@@ -15,7 +15,7 @@ export default class Game {
 
 		// calcula a forca (https://stackoverflow.com/questions/345838/ball-to-ball-collision-detection-and-handling)
 		let force = ((p2.velocity.x - p1.velocity.x) * dirX + (p2.velocity.y - p1.velocity.y) * dirY) / (dirX ** 2 + dirY ** 2);
-		
+
 		// forca minima p nao se atravessarem (so acontece quando perfeitamente alinhados)
 		force = Math.min(force, -0.055);
 

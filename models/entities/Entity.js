@@ -1,4 +1,4 @@
-import { context, keysPressed } from '../../index.js';
+import { context } from '../../index.js';
 
 export default class Entity {
 	constructor(posX, posY, size, speed, sprite) {
@@ -7,10 +7,6 @@ export default class Entity {
 		this.speed = speed;
 		this.sprite = new Image();
 		this.sprite.src = sprite;
-	}
-
-	render() {
-		context.drawImage(this.sprite, this.position.x, this.position.y, this.size, this.size);
 	}
 
 	collidesWith(object) {
@@ -26,5 +22,9 @@ export default class Entity {
 
 		// se a distancia dos centros for menor que a soma dos raios, colide
 		return distanceX ** 2 + distanceY ** 2 < combinedRadius ** 2;
+	}
+
+	render() {
+		context.drawImage(this.sprite, this.position.x, this.position.y, this.size, this.size);
 	}
 }

@@ -9,17 +9,19 @@ export const keysPressed = {};
 
 document.addEventListener('keydown', (e) => {
 	keysPressed[e.key.toLowerCase()] = true;
-	document.getElementById(e.key.toLowerCase()).classList.add('key-down')
+	let keyElement = document.getElementById(e.key.toLowerCase())
+	if (keyElement) keyElement.classList.add('key-down')
 });
 document.addEventListener('keyup', (e) => {
 	keysPressed[e.key.toLowerCase()] = false;
-	document.getElementById(e.key.toLowerCase()).classList.remove('key-down')
+	let keyElement = document.getElementById(e.key.toLowerCase())
+	if (keyElement) keyElement.classList.remove('key-down')
 });
 
 const spaceshipSize = 50
 const players = [
-    new Spaceship(spaceshipSize, (canvas.height / 3) - (spaceshipSize / 2), spaceshipSize, 1, './img/spaceship0.png'),
-    new Spaceship(spaceshipSize, (canvas.height / 3 * 2) - (spaceshipSize / 2), spaceshipSize, 1, './img/spaceship1.png')
+	new Spaceship(spaceshipSize, (canvas.height / 3) - (spaceshipSize / 2), spaceshipSize, 1, './img/spaceship0.png'),
+	new Spaceship(spaceshipSize, (canvas.height / 3 * 2) - (spaceshipSize / 2), spaceshipSize, 1, './img/spaceship1.png')
 ];
 
 const game = new Game(players);

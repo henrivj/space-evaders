@@ -6,6 +6,7 @@ export class Spaceship extends Entity {
 	velocity = { x: 0, y: 0 };
 	maxHealth = 100;
 	health = this.maxHealth;
+	tilt = 0;
 
 	update() {
 		this.velocity.x += this.direction.x * this.speed;
@@ -13,8 +14,20 @@ export class Spaceship extends Entity {
 
 		this.position.x += this.velocity.x;
 		this.position.y += this.velocity.y;
-		
-		this.velocity.x *= 0.97;
-		this.velocity.y *= 0.97;
+
+		// a cada update a velocidade vai diminuindo devagar ao invez de parar de vez
+		this.velocity.x *= 0.9;
+		this.velocity.y *= 0.9;
+
+		this.tilt += this.velocity.y / 360;
+		this.tilt *= 0.9
+	}
+
+	render() {
+		context.save();
+		context.translate(this.position.x + this.size / 2, this.position.y + this.size / 2);
+		context.rotate(this.tilt);
+		context.drawImage(this.sprite, -this.size / 2, -this.size / 2, this.size, this.size);
+		context.restore();
 	}
 }
