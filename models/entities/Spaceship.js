@@ -2,10 +2,10 @@ import { context } from '../../index.js';
 import Entity from './Entity.js';
 
 export class Spaceship extends Entity {
-	score = 0
+	score = 0;
+	startPosition = { x: this.position.x, y: this.position.y };
 	direction = { x: 0, y: 0 };
-	velocity = { x: 0, y: 0 };
-	maxHealth = 100;
+	maxHealth = 1000;
 	health = this.maxHealth;
 	tilt = 0;
 
@@ -22,6 +22,23 @@ export class Spaceship extends Entity {
 
 		this.tilt += this.velocity.y / 360;
 		this.tilt *= 0.9
+	}
+
+	takeDamage(amount) {
+		this.health -= amount;
+
+		if (this.health <= 0) {
+			this.health = 0;
+		}
+	}
+
+	reset() {
+		this.health = this.maxHealth;
+		this.score = 0;
+		this.position.x = this.startPosition.x;
+		this.position.y = this.startPosition.y;
+		this.velocity = { x: 0, y: 0 };
+		this.tilt = 0;
 	}
 
 	render() {

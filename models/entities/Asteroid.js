@@ -9,7 +9,11 @@ export default class Asteroid extends Entity {
 	update() {
 		if (!this.canBeReset && this.position.x < -this.size) return
 		this.rotation += this.rotationSpeed;
-		this.position.x -= this.speed;
+		this.position.x += this.velocity.x;
+		this.position.y += this.velocity.y;
+
+		this.velocity.y *= 0.95;
+		this.velocity.x = Math.min(this.velocity.x, -this.speed);
 	}
 
 	render() {

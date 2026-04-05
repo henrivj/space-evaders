@@ -31,7 +31,7 @@ export default class Cluster {
 		return generatedEntities;
 	}
 
-	resetPassedEntities() {
+	recycleEntities() {
 		this.entities.forEach(entity => {
 			if (entity.position.x > -entity.size || entity.canBeReset === false) return
 			entity.size = Math.random() * (this.size.max - this.size.min) + this.size.min;

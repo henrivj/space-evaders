@@ -1,10 +1,9 @@
-import { context } from '../../index.js';
-
 export default class Entity {
 	constructor(posX, posY, size, speed, sprite) {
 		this.position = { x: posX, y: posY };
 		this.size = size;
 		this.speed = speed;
+		this.velocity = { x: 0, y: 0 };
 		this.sprite = new Image();
 		this.sprite.src = sprite;
 	}
@@ -22,5 +21,28 @@ export default class Entity {
 
 		// se a distancia dos centros for menor que a soma dos raios, colide
 		return distanceX ** 2 + distanceY ** 2 < combinedRadius ** 2;
+	}
+
+	resolveCollision(other) {
+		if (!this.collidesWith(other)) return;
+
+		const mass1 = this.size ** 2;
+		const mass2 = other.size ** 2;
+
+		// descobre a direcao da batida
+		const dirX = other.position.x - this.position.x;
+		const dirY = other.position.y - this.position.y;
+
+		// calcula a forca (https://stackoverflow.com/questions/345838/ball-to-ball-collision-detection-and-handling)
+		let force = ((other.velocity.x - this.velocity.x) * dirX + (other.velocity.y - this.velocity.y) * dirY) / (dirX ** 2 + dirY ** 2);
+
+		// forca minima p nao se atravessarem (so acontece quando perfeitamente alinhados)
+		force = Math.min(force, -0.055);
+
+		// maior fica com mais forca
+		this.velocity.x += (force * dirX ) * mass2 / mass1;
+		this.velocity.y += (force * dirY ) * mass2 / mass1;
+		other.velocity.x -= (force * dirX) * mass1 / mass2;
+		other.velocity.y -= (force * dirY) * mass1 / mass2;
 	}
 }

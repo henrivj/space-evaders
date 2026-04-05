@@ -31,7 +31,7 @@ const levels = [
 		index: 0,
 		scoreGoal: 2500,
 		clusters: [
-			new Cluster(Asteroid, 4, 8, 40, 60, 4, 6, './img/asteroid.png')
+			new Cluster(Asteroid, 4, 8, 60, 80, 4, 6, './img/asteroid.png')
 		],
 		background: './img/levels/level_1.png'
 	},
@@ -39,7 +39,7 @@ const levels = [
 		index: 1,
 		scoreGoal: 5000,
 		clusters: [
-			new Cluster(Asteroid, 4, 8, 40, 60, 4, 6, './img/asteroid.png')
+			new Cluster(Asteroid, 4, 8, 70, 90, 4, 6, './img/asteroid.png')
 		],
 		background: './img/levels/level_2.png'
 	},
@@ -47,7 +47,7 @@ const levels = [
 		index: 2,
 		scoreGoal: 10000,
 		clusters: [
-			new Cluster(Asteroid, 4, 8, 40, 60, 4, 6, './img/asteroid.png')
+			new Cluster(Asteroid, 4, 8, 80, 100, 4, 6, './img/asteroid.png')
 		],
 		background: './img/levels/level_3.png'
 	},

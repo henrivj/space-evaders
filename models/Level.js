@@ -9,6 +9,19 @@ export default class Level {
 		this.bgOffset = 0;
 	}
 
+	reset() {
+		this.clusters.forEach(cluster => {
+			cluster.entities = cluster.generateEntities()
+		})
+		this.bgOffset = 0
+	}
+
+	recycleEntities(){
+		this.clusters.forEach((cluster) => {
+				cluster.recycleEntities()
+		});
+	}
+
 	isComplete(score) {
 		return score >= this.scoreGoal;
 	}

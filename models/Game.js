@@ -7,6 +7,15 @@ export default class Game {
 		this.players = players;
 		this.levels = this.generateLevels(levels);
 		this.currentLevel = 0;
+		this.state = 'menu';
+	}
+
+	getScore() {
+		let score = 0;
+		this.players.forEach((player) => {
+			score += player.score / this.players.length;
+		});
+		return Math.floor(score);
 	}
 
 	generateLevels(levels) {
@@ -17,33 +26,24 @@ export default class Game {
 		return generatedLevels;
 	}
 
-	resetPassedEntities() {
-		this.levels.forEach(level => {
-			level.clusters.forEach(cluster => {
-				cluster.resetPassedEntities()
-			})
-		})
+	recycleEntities() {
+		this.levels.forEach((level) => {
+			level.recycleEntities();
+		});
 	}
 
 	drainPreviousLevels() {
-		let score = 0;
-		this.players.forEach(player => {
-			score += player.score / this.players.length;
-		})
-
 		this.levels.forEach((level) => {
-			if (level.isComplete(score)) level.drainClusters();
+			if (level.isComplete(this.getScore())) level.drainClusters();
 		});
 	}
 
 	handlePlayerWallCollision() {
-		this.players.forEach(player => {
-			const halfSize = player.size / 2;
-
+		this.players.forEach((player) => {
 			// cima/baixo
-			if (player.position.y < -halfSize) {
+			if (player.position.y < -player.size / 2) {
 				player.position.y += canvas.height;
-			} else if (player.position.y > canvas.height - halfSize) {
+			} else if (player.position.y > canvas.height - player.size / 2) {
 				player.position.y -= canvas.height;
 			}
 
@@ -58,25 +58,26 @@ export default class Game {
 		});
 	}
 
+	handlePlayerEnemyCollision() {
+		this.players.forEach((player) => {
+			this.levels.forEach((level, index) => {
+				if (index > this.currentLevel) return;
+
+				level.clusters.forEach((cluster) => {
+					cluster.entities.forEach((entity) => {
+						if (player.collidesWith(entity)) {
+							player.resolveCollision(entity);
+							player.takeDamage(entity.size);
+						}
+					});
+				});
+			});
+		});
+	}
 
 	handlePlayerPlayerCollision() {
 		const [p1, p2] = this.players;
-		if (!p1.collidesWith(p2)) return;
-
-		// descobre a direcao da batida
-		const dirX = p2.position.x - p1.position.x;
-		const dirY = p2.position.y - p1.position.y;
-
-		// calcula a forca (https://stackoverflow.com/questions/345838/ball-to-ball-collision-detection-and-handling)
-		let force = ((p2.velocity.x - p1.velocity.x) * dirX + (p2.velocity.y - p1.velocity.y) * dirY) / (dirX ** 2 + dirY ** 2);
-
-		// forca minima p nao se atravessarem (so acontece quando perfeitamente alinhados)
-		force = Math.min(force, -0.055);
-
-		p1.velocity.x += force * dirX;
-		p1.velocity.y += force * dirY;
-		p2.velocity.x -= force * dirX;
-		p2.velocity.y -= force * dirY;
+		p1.resolveCollision(p2);
 	}
 
 	handlePlayerMovement() {
@@ -101,35 +102,68 @@ export default class Game {
 	updatePlayer() {
 		this.handlePlayerMovement();
 		this.handlePlayerPlayerCollision();
-		this.handlePlayerWallCollision()
+		this.handlePlayerEnemyCollision();
+		this.handlePlayerWallCollision();
 		this.players.forEach((p) => p.update());
 	}
 
 	updateClusters() {
 		this.levels.forEach((level, index) => {
 			if (index > this.currentLevel) return;
-			level.updateClusters()
+			level.updateClusters();
 		});
 	}
 
-	updateLevelIndex() {
-		let score = 0;
-		this.players.forEach(player => {
-			score += player.score / this.players.length;
-		})
-
+	updateCurrentLevel() {
 		this.levels.forEach((level) => {
-			if (!level.isComplete(score)) return;
+			if (!level.isComplete(this.getScore())) return;
 			this.currentLevel = level.index + 1;
 		});
 	}
 
+	resetGame() {
+		this.levels.forEach(level => {
+			level.reset()
+		})
+		this.players.forEach(player => {
+			player.reset()
+		})
+	}
+
+	updateGameState() {
+		if (this.levels[this.currentLevel].isComplete(this.getScore()) && !this.levels[this.currentLevel + 1]) this.state = 'victory';
+		this.players.forEach((player) => {
+			if (player.health <= 0) this.state = 'defeat';
+		});
+
+		if (!keysPressed['enter']) return;
+
+		switch (this.state) {
+			case 'playing':
+				this.state = 'pause';
+				break;
+			case 'pause':
+			case 'menu':
+				this.state = 'playing';
+				break;
+			case 'victory':
+			case 'defeat':
+				this.resetGame()
+				this.state = 'menu';
+				break;
+		}
+
+		keysPressed['enter'] = false;
+	}
+
 	update() {
-		this.updateLevelIndex();
+		this.updateGameState();
+		this.updateCurrentLevel();
+
 		this.updateClusters();
 		this.updatePlayer();
 
-		this.drainPreviousLevels()
-		this.resetPassedEntities()
+		this.drainPreviousLevels();
+		this.recycleEntities();
 	}
 }
