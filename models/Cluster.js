@@ -25,7 +25,9 @@ export default class Cluster {
 				y: laneHeight * Math.floor(Math.random() * this.lanes) + laneHeight / 2 - size / 2
 			}
 
-			generatedEntities.push(new this.Entity(position.x, position.y, size, speed, this.sprite));
+			let entity = new this.Entity(position.x, position.y, size, speed, this.sprite);
+			entity.velocity.x = -speed;
+			generatedEntities.push(entity);
 		}
 
 		return generatedEntities;
@@ -41,6 +43,9 @@ export default class Cluster {
 
 			entity.position.x = canvas.width + Math.random() * canvas.width
 			entity.position.y = laneHeight * Math.floor(Math.random() * this.lanes) + laneHeight / 2 - entity.size / 2
+
+			entity.velocity.x = -entity.speed
+			entity.velocity.y = 0
 		})
 	}
 

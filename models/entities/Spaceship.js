@@ -4,12 +4,44 @@ import Entity from './Entity.js';
 export class Spaceship extends Entity {
 	score = 0;
 	startPosition = { x: this.position.x, y: this.position.y };
-	direction = { x: 0, y: 0 };
-	maxHealth = 1000;
+	startSize = this.size;
+	maxHealth = 100;
 	health = this.maxHealth;
+	direction = { x: 0, y: 0 };
 	tilt = 0;
 
+	isDead() {
+		return this.health <= 0 && this.size <= 0;
+	}
+
+	takeDamage(entity) {
+		this.health = Math.max(this.health - entity.size, 0);
+	}
+
+
+	reset() {
+		this.health = this.maxHealth;
+		this.score = 0;
+		this.size = this.startSize;
+		this.position.x = this.startPosition.x;
+		this.position.y = this.startPosition.y;
+		this.velocity = { x: 0, y: 0 };
+		this.tilt = 0;
+	}
+
+	handleDeathAnimation() {
+		if (this.health <= 0 && this.size > 0) {
+			this.size = Math.max(0, this.size - 1);
+			this.tilt += 0.1;
+
+			this.position.x += Math.random();
+			this.position.y += Math.random();
+		}
+	}
+
 	update() {
+		if (this.isDead() || this.health <= 0) return;
+
 		this.velocity.x += this.direction.x * this.speed;
 		this.velocity.y += this.direction.y * this.speed;
 
@@ -21,27 +53,12 @@ export class Spaceship extends Entity {
 		this.velocity.y *= 0.9;
 
 		this.tilt += this.velocity.y / 360;
-		this.tilt *= 0.9
-	}
-
-	takeDamage(amount) {
-		this.health -= amount;
-
-		if (this.health <= 0) {
-			this.health = 0;
-		}
-	}
-
-	reset() {
-		this.health = this.maxHealth;
-		this.score = 0;
-		this.position.x = this.startPosition.x;
-		this.position.y = this.startPosition.y;
-		this.velocity = { x: 0, y: 0 };
-		this.tilt = 0;
+		this.tilt *= 0.9;
 	}
 
 	render() {
+		if (this.isDead()) return;
+
 		context.save();
 		context.translate(this.position.x + this.size / 2, this.position.y + this.size / 2);
 		context.rotate(this.tilt);

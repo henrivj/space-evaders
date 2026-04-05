@@ -6,6 +6,7 @@ export default class Entity {
 		this.velocity = { x: 0, y: 0 };
 		this.sprite = new Image();
 		this.sprite.src = sprite;
+		this.force = 0;
 	}
 
 	collidesWith(object) {
@@ -34,15 +35,15 @@ export default class Entity {
 		const dirY = other.position.y - this.position.y;
 
 		// calcula a forca (https://stackoverflow.com/questions/345838/ball-to-ball-collision-detection-and-handling)
-		let force = ((other.velocity.x - this.velocity.x) * dirX + (other.velocity.y - this.velocity.y) * dirY) / (dirX ** 2 + dirY ** 2);
+		this.force = ((other.velocity.x - this.velocity.x) * dirX + (other.velocity.y - this.velocity.y) * dirY) / (dirX ** 2 + dirY ** 2);
 
 		// forca minima p nao se atravessarem (so acontece quando perfeitamente alinhados)
-		force = Math.min(force, -0.055);
+		this.force = Math.min(this.force, -0.055);
 
 		// maior fica com mais forca
-		this.velocity.x += (force * dirX ) * mass2 / mass1;
-		this.velocity.y += (force * dirY ) * mass2 / mass1;
-		other.velocity.x -= (force * dirX) * mass1 / mass2;
-		other.velocity.y -= (force * dirY) * mass1 / mass2;
+		this.velocity.x += (this.force * dirX * mass2) / mass1;
+		this.velocity.y += (this.force * dirY * mass2) / mass1;
+		other.velocity.x -= (this.force * dirX * mass1) / mass2;
+		other.velocity.y -= (this.force * dirY * mass1) / mass2;
 	}
 }

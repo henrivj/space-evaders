@@ -7,17 +7,17 @@ export default class Asteroid extends Entity {
 	canBeReset = true;
 
 	update() {
-		if (!this.canBeReset && this.position.x < -this.size) return
+		if (this.position.x < -this.size) return;
+
 		this.rotation += this.rotationSpeed;
 		this.position.x += this.velocity.x;
 		this.position.y += this.velocity.y;
 
 		this.velocity.y *= 0.95;
-		this.velocity.x = Math.min(this.velocity.x, -this.speed);
 	}
 
 	render() {
-		if (!this.canBeReset && this.position.x < -this.size) return
+		if (this.position.x < -this.size) return;
 		context.save();
 		context.translate(this.position.x + this.size / 2, this.position.y + this.size / 2);
 		context.rotate(this.rotation);

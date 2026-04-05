@@ -1,8 +1,9 @@
-import { canvas, context } from '../index.js';
+import { canvas, context, keysPressed } from '../index.js';
 
 export default class Renderer {
 	constructor(game) {
 		this.game = game;
+		this.sidebarKeys = Array.from(document.getElementsByClassName('key')); // https://stackoverflow.com/a/222847
 	}
 
 	drawBox(position, size, fill = '#000', stroke = '#fff', shadow = '#fff') {
@@ -105,11 +106,17 @@ export default class Renderer {
 		const hpY = startY + 28;
 		this.drawBox({ x: infoX, y: hpY }, { w: barW, h: 10 }, '#222', '#fff', '#000');
 
-		let hpColor = '#666';
-		if (healthRatio > 0.5) {
-			hpColor = '#fff';
-		} else if (healthRatio > 0.25) {
-			hpColor = '#aaa';
+		let hpColor;
+		if (healthRatio <= 0) {
+			hpColor = `rgb(${Math.floor(180 + 75 * Math.abs(Math.sin(Date.now() / 200)))}, 0, 0)`;
+		} else if (healthRatio <= 0.25) {
+			hpColor = '#ff2222';
+		} else if (healthRatio <= 0.5) {
+			hpColor = '#ff8800';
+		} else if (healthRatio <= 0.75) {
+			hpColor = '#ffdd00';
+		} else {
+			hpColor = '#44ff44';
 		}
 
 		context.fillStyle = hpColor;
@@ -125,11 +132,17 @@ export default class Renderer {
 	}
 
 	renderPlayers() {
-		this.game.players.forEach(player => player.render());
+		this.game.players.forEach((player) => {
+			if (player.size <= 0) return;
+			player.render();
+		});
 	}
 
 	renderClusters() {
-		this.game.levels.forEach(level => level.renderClusters());
+		this.game.levels.forEach((level, index) => {
+			if (index > this.game.currentLevel) return;
+			level.renderClusters();
+		});
 	}
 
 	renderBackground() {
@@ -146,8 +159,20 @@ export default class Renderer {
 		context.drawImage(current.background, current.bgOffset, 0, canvas.width, canvas.height);
 	}
 
+	renderSidebarKeys() {
+		this.sidebarKeys.forEach((key) => {
+			if (keysPressed[key.id]) {
+				key.classList.add('key-down');
+			} else {
+				key.classList.remove('key-down');
+			}
+		});
+	}
+
 	render() {
 		context.clearRect(0, 0, canvas.width, canvas.height);
+
+		this.renderSidebarKeys();
 
 		if (this.game.state !== 'menu') {
 			this.renderBackground();
@@ -158,7 +183,7 @@ export default class Renderer {
 			this.renderScore();
 		}
 
-		if (this.game.state === 'paused') {
+		if (this.game.state === 'pause') {
 			this.renderScreen('JOGO PAUSADO', null, 'PRESSIONE ENTER PARA DESPAUSAR', '#fff', 0.75);
 		} else if (this.game.state === 'menu') {
 			const hi = `MAIOR PONTUAÇÃO: ${Number(localStorage.getItem('highScore'))}`;

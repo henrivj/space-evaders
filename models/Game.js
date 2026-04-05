@@ -38,6 +38,12 @@ export default class Game {
 		});
 	}
 
+	handlePlayerDeath() {
+		this.players.forEach((player) => {
+			player.handleDeathAnimation();
+		});
+	}
+
 	handlePlayerWallCollision() {
 		this.players.forEach((player) => {
 			// cima/baixo
@@ -67,7 +73,7 @@ export default class Game {
 					cluster.entities.forEach((entity) => {
 						if (player.collidesWith(entity)) {
 							player.resolveCollision(entity);
-							player.takeDamage(entity.size);
+							player.takeDamage(entity);
 						}
 					});
 				});
@@ -104,6 +110,7 @@ export default class Game {
 		this.handlePlayerPlayerCollision();
 		this.handlePlayerEnemyCollision();
 		this.handlePlayerWallCollision();
+		this.handlePlayerDeath();
 		this.players.forEach((p) => p.update());
 	}
 
@@ -122,19 +129,22 @@ export default class Game {
 	}
 
 	resetGame() {
-		this.levels.forEach(level => {
-			level.reset()
-		})
-		this.players.forEach(player => {
-			player.reset()
-		})
+		this.levels.forEach((level) => {
+			level.reset();
+		});
+		this.players.forEach((player) => {
+			player.reset();
+		});
 	}
 
 	updateGameState() {
 		if (this.levels[this.currentLevel].isComplete(this.getScore()) && !this.levels[this.currentLevel + 1]) this.state = 'victory';
+
+		let bothDead = true;
 		this.players.forEach((player) => {
-			if (player.health <= 0) this.state = 'defeat';
+			if (!player.isDead()) bothDead = false;
 		});
+		if (bothDead) this.state = 'defeat';
 
 		if (!keysPressed['enter']) return;
 
@@ -148,7 +158,7 @@ export default class Game {
 				break;
 			case 'victory':
 			case 'defeat':
-				this.resetGame()
+				this.resetGame();
 				this.state = 'menu';
 				break;
 		}
@@ -158,8 +168,10 @@ export default class Game {
 
 	update() {
 		this.updateGameState();
-		this.updateCurrentLevel();
 
+		if (this.state !== 'playing') return;
+
+		this.updateCurrentLevel();
 		this.updateClusters();
 		this.updatePlayer();
 
