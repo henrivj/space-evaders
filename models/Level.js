@@ -16,9 +16,9 @@ export default class Level {
 		this.bgOffset = 0
 	}
 
-	recycleEntities(){
+	recycleEntities() {
 		this.clusters.forEach((cluster) => {
-				cluster.recycleEntities()
+			cluster.recycleEntities()
 		});
 	}
 

@@ -14,10 +14,19 @@ export class Spaceship extends Entity {
 		return this.health <= 0 && this.size <= 0;
 	}
 
-	takeDamage(entity) {
-		this.health = Math.max(this.health - entity.size, 0);
+	calculateCollisionDamage(entity) {
+		const distanceX = entity.position.x - this.position.x;
+		const distanceY = entity.position.y - this.position.y;
+		const distance = Math.sqrt(distanceX ** 2 + distanceY ** 2); // vetor normal (quase mesma logica da resolveCollision())
+
+		return Math.floor(distance + entity.size * 0.01);
 	}
 
+	takeDamage(entity) {
+		const damage = this.calculateCollisionDamage(entity);
+		this.health = Math.max(this.health - damage, 0);
+		return damage;
+	}
 
 	reset() {
 		this.health = this.maxHealth;

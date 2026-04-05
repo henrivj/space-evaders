@@ -67,12 +67,6 @@ export default class Renderer {
 		this.drawText(Math.floor(this.game.getScore()), { x: x + 10, y: y + h - fillH - 10 }, 10);
 	}
 
-	renderHealth() {
-		this.game.players.forEach((player, i) => {
-			this.renderPlayerStatus(player, i);
-		});
-	}
-
 	renderPlayerStatus(player, index) {
 		const { health, maxHealth, score, sprite } = player;
 		const levels = this.game.levels;
@@ -129,6 +123,12 @@ export default class Renderer {
 
 		const scoreText = Math.floor(score);
 		this.drawText(scoreText, { x: startX + cardW - 12, y: startY + 18 }, 8, '#aaa', null, 'right');
+	}
+
+	renderHealth() {
+		this.game.players.forEach((player, i) => {
+			this.renderPlayerStatus(player, i);
+		});
 	}
 
 	renderPlayers() {

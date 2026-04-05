@@ -10,20 +10,20 @@ export default class Game {
 		this.state = 'menu';
 	}
 
-	getScore() {
-		let score = 0;
-		this.players.forEach((player) => {
-			score += player.score / this.players.length;
-		});
-		return Math.floor(score);
-	}
-
 	generateLevels(levels) {
 		const generatedLevels = [];
 		levels.forEach((level) => {
 			generatedLevels.push(new Level(level.index, level.scoreGoal, level.clusters, level.background));
 		});
 		return generatedLevels;
+	}
+
+	getScore() {
+		let score = 0;
+		this.players.forEach((player) => {
+			score += player.score / this.players.length;
+		});
+		return Math.floor(score);
 	}
 
 	recycleEntities() {

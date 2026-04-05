@@ -30,20 +30,20 @@ export default class Entity {
 		const mass1 = this.size ** 2;
 		const mass2 = other.size ** 2;
 
-		// descobre a direcao da batida
-		const dirX = other.position.x - this.position.x;
-		const dirY = other.position.y - this.position.y;
+		// descobre a distancia da batida (vetor normal)
+		const distanceX = other.position.x - this.position.x;
+		const distanceY = other.position.y - this.position.y;
 
-		// calcula a forca (https://stackoverflow.com/questions/345838/ball-to-ball-collision-detection-and-handling)
-		this.force = ((other.velocity.x - this.velocity.x) * dirX + (other.velocity.y - this.velocity.y) * dirY) / (dirX ** 2 + dirY ** 2);
+		// calcula a forca (https://stackoverflow.com/questions/345838/ball-to-ball-collision-detection-and-handling => https://www.vobarian.com/collisions/2dcollisions2.pdf)
+		this.force = ((other.velocity.x - this.velocity.x) * distanceX + (other.velocity.y - this.velocity.y) * distanceY) / (distanceX ** 2 + distanceY ** 2);
 
 		// forca minima p nao se atravessarem (so acontece quando perfeitamente alinhados)
 		this.force = Math.min(this.force, -0.055);
 
 		// maior fica com mais forca
-		this.velocity.x += (this.force * dirX * mass2) / mass1;
-		this.velocity.y += (this.force * dirY * mass2) / mass1;
-		other.velocity.x -= (this.force * dirX * mass1) / mass2;
-		other.velocity.y -= (this.force * dirY * mass1) / mass2;
+		this.velocity.x += (this.force * distanceX * mass2) / mass1;
+		this.velocity.y += (this.force * distanceY * mass2) / mass1;
+		other.velocity.x -= (this.force * distanceX * mass1) / mass2;
+		other.velocity.y -= (this.force * distanceY * mass1) / mass2;
 	}
 }

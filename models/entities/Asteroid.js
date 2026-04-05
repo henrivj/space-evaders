@@ -14,6 +14,7 @@ export default class Asteroid extends Entity {
 		this.position.y += this.velocity.y;
 
 		this.velocity.y *= 0.95;
+		if (this.velocity.x > -this.speed) this.velocity.x -= 0.1;
 	}
 
 	render() {
