@@ -11,19 +11,29 @@ export default class Cluster {
 		this.entities = this.generateEntities();
 	}
 
+	getRandomSize() {
+		return Math.random() * (this.size.max - this.size.min) + this.size.min;
+	}
+
+	getRandomSpeed() {
+		return Math.random() * (this.speed.max - this.speed.min) + this.speed.min;
+	}
+
+	getRandomPosition(size) {
+		let laneHeight = canvas.height / this.lanes;
+		return {
+			x: canvas.width + Math.random() * canvas.width,
+			y: laneHeight * Math.floor(Math.random() * this.lanes) + laneHeight / 2 - size / 2
+		};
+	}
+
 	generateEntities() {
 		let generatedEntities = [];
 
 		for (let i = 0; i < this.quantity; i++) {
-			let size = Math.random() * (this.size.max - this.size.min) + this.size.min;
-			let speed = Math.random() * (this.speed.max - this.speed.min) + this.speed.min;
-
-			let laneHeight = canvas.height / this.lanes;
-
-			let position = {
-				x: canvas.width + Math.random() * canvas.width,
-				y: laneHeight * Math.floor(Math.random() * this.lanes) + laneHeight / 2 - size / 2
-			};
+			let size = this.getRandomSize();
+			let speed = this.getRandomSpeed();
+			let position = this.getRandomPosition(size);
 
 			let entity = new this.Entity(position.x, position.y, size, speed, this.sprite);
 			entity.velocity.x = -speed;
@@ -35,18 +45,23 @@ export default class Cluster {
 
 	recycleEntities() {
 		this.entities.forEach((entity) => {
-			if (entity.position.x > -entity.size || entity.canBeReset === false || !entity.alive) return;
-			entity.size = Math.random() * (this.size.max - this.size.min) + this.size.min;
-			entity.speed = Math.random() * (this.speed.max - this.speed.min) + this.speed.min;
-
-			let laneHeight = canvas.height / this.lanes;
-
-			entity.position.x = canvas.width + Math.random() * canvas.width;
-			entity.position.y = laneHeight * Math.floor(Math.random() * this.lanes) + laneHeight / 2 - entity.size / 2;
-
-			entity.velocity.x = -entity.speed;
-			entity.velocity.y = 0;
+			if (entity.position.x > -entity.size || entity.canBeReset === false || !entity.isAlive()) return;
+			this.resetEntity(entity);
 		});
+	}
+
+	resetEntity(entity) {
+		entity.size = this.getRandomSize();
+		entity.speed = this.getRandomSpeed();
+		let position = this.getRandomPosition(entity.size);
+
+		entity.position.x = position.x;
+		entity.position.y = position.y;
+
+		entity.velocity.x = -entity.speed;
+		entity.velocity.y = 0;
+		entity.health = entity.maxHealth || 1;
+		entity.canBeReset = true;
 	}
 
 	drain() {
@@ -59,7 +74,6 @@ export default class Cluster {
 		this.entities.forEach((entity) => {
 			entity.update();
 		});
-		this.entities = this.entities.filter((entity) => entity.alive || entity.size > 0);
 	}
 
 	render() {

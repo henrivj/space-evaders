@@ -1,14 +1,20 @@
 export default class Entity {
-	constructor(posX, posY, size, speed, sprite) {
+	constructor(posX, posY, size, speed, sprite, health = 100) {
 		this.position = { x: posX, y: posY };
 		this.size = size;
 		this.speed = speed;
 		this.velocity = { x: 0, y: 0 };
 		this.sprite = new Image();
 		this.sprite.src = sprite;
+		this.maxHealth = health;
+
+		this.health = this.maxHealth;
 		this.force = 0;
-		this.alive = true;
 		this.rotation = 0;
+	}
+
+	isAlive() {
+		return this.health > 0;
 	}
 
 	collidesWith(object) {
@@ -50,7 +56,7 @@ export default class Entity {
 	}
 
 	handleDestructionAnimation() {
-		if (!this.alive && this.size > 0) {
+		if (this.health <= 0 && this.size > 0) {
 			this.size = Math.max(0, this.size - 1);
 			this.rotation += 0.1;
 			this.rotation *= 0.9;

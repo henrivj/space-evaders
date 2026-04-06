@@ -82,8 +82,8 @@ export default class Game {
 					} else if (cluster.Entity === Star) {
 						cluster.entities.forEach((entity) => {
 							if (player.collidesWith(entity)) {
-								player.score += Math.floor(entity.size / entity.speed);
-								entity.alive = false;
+								player.score += entity.score;
+								cluster.resetEntity(entity);
 							}
 						});
 					}
@@ -153,7 +153,7 @@ export default class Game {
 
 		let bothDead = true;
 		this.players.forEach((player) => {
-			if (!player.isFullyDead()) bothDead = false;
+			if (player.isAlive() || player.size > 0) bothDead = false;
 		});
 		if (bothDead) this.state = 'defeat';
 

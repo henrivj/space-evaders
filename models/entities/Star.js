@@ -2,11 +2,12 @@ import Entity from './Entity.js';
 import { context } from '../../index.js';
 
 export default class Star extends Entity {
+	score = Math.floor(Math.sqrt(this.speed * (this.size ** 2))); // essa formula nao significa nada, so fica bem balanceada
 	rotationSpeed = Math.random() * (0.01 - 0.001) + 0.001;
 	canBeReset = true;
 
 	update() {
-		if (!this.alive) {
+		if (!this.isAlive()) {
 			this.handleDestructionAnimation();
 			return;
 		}
@@ -16,9 +17,6 @@ export default class Star extends Entity {
 		this.rotation += this.rotationSpeed;
 		this.position.x += this.velocity.x;
 		this.position.y += this.velocity.y;
-
-		this.velocity.y *= 0.95;
-		if (this.velocity.x > -this.speed) this.velocity.x -= 0.1;
 	}
 
 	render() {

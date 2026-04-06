@@ -5,13 +5,7 @@ export class Spaceship extends Entity {
 	score = 0;
 	startPosition = { x: this.position.x, y: this.position.y };
 	startSize = this.size;
-	maxHealth = 100;
-	health = this.maxHealth;
 	direction = { x: 0, y: 0 };
-
-	isFullyDead() {
-		return !this.alive && this.size <= 0;
-	}
 
 	calculateCollisionDamage(entity) {
 		const distanceX = entity.position.x - this.position.x;
@@ -24,12 +18,10 @@ export class Spaceship extends Entity {
 	takeDamage(entity) {
 		const damage = this.calculateCollisionDamage(entity);
 		this.health = Math.max(this.health - damage, 0);
-		if (this.health <= 0) this.alive = false;
 		return damage;
 	}
 
 	reset() {
-		this.alive = true;
 		this.health = this.maxHealth;
 		this.score = 0;
 		this.size = this.startSize;
@@ -41,14 +33,14 @@ export class Spaceship extends Entity {
 
 	handleDestructionAnimation() {
 		super.handleDestructionAnimation();
-		if (!this.alive && this.size > 0) {
+		if (!this.isAlive() && this.size > 0) {
 			this.position.x += Math.random();
 			this.position.y += Math.random();
 		}
 	}
 
 	update() {
-		if (this.isFullyDead() || this.health <= 0) return;
+		if (!this.isAlive() && this.size <= 0) return;
 
 		this.velocity.x += this.direction.x * this.speed;
 		this.velocity.y += this.direction.y * this.speed;
@@ -65,7 +57,7 @@ export class Spaceship extends Entity {
 	}
 
 	render() {
-		if (this.isFullyDead()) return;
+		if (!this.isAlive() && this.size <= 0) return;
 
 		context.save();
 		context.translate(this.position.x + this.size / 2, this.position.y + this.size / 2);
