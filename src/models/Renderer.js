@@ -44,13 +44,6 @@ export default class Renderer {
 	}
 
 	renderScore() {
-		if (this.bgOffset === undefined) {
-			this.bgOffset = 0;
-		}
-
-		if (this.game.targetBgOffset !== undefined) {
-			this.bgOffset += (this.game.targetBgOffset - this.bgOffset) * 0.1;
-		}
 
 		const finalGoal = this.game.levels[this.game.levels.length - 1].scoreGoal;
 		const barH = canvas.height * 0.6;
@@ -86,7 +79,7 @@ export default class Renderer {
 		context.lineWidth = 1;
 		this.game.levels.forEach((level, i) => {
 			if (i === this.game.levels.length - 1) return;
-			const tickY = barY + barH - (level.scoreGoal / finalGoal) * barH + this.bgOffset;
+			const tickY = barY + barH - (level.scoreGoal / finalGoal) * barH;
 			context.beginPath();
 			context.moveTo(barX, tickY);
 			context.lineTo(barX + 20, tickY);

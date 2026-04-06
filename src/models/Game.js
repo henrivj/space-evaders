@@ -1,5 +1,4 @@
-// Game.js
-import { keysPressed } from '../index.js';
+import { keysPressed, canvas } from '../index.js';
 import Level from './Level.js';
 import Asteroid from './entities/Asteroid.js';
 import Star from './entities/Star.js';
@@ -10,6 +9,14 @@ export default class Game {
 		this.levels = this.generateLevels(levels);
 		this.currentLevel = 0;
 		this.state = 'menu';
+		this.winningPlayer = null;
+		this.sounds = {
+			collision: new Audio('/sound/collision.mp3'),
+			star: new Audio('/sound/star.mp3'),
+			death: new Audio('/sound/death.mp3'),
+			defeat: new Audio('/sound/defeat.mp3'),
+			victory: new Audio('/sound/victory.mp3')
+		};
 	}
 
 	generateLevels(levels) {
@@ -28,6 +35,12 @@ export default class Game {
 		return Math.floor(score);
 	}
 
+	playSound(soundName) {
+		if (!this.sounds[soundName]) return;
+		this.sounds[soundName].currentTime = 0;
+		this.sounds[soundName].play();
+	}
+
 	recycleEntities() {
 		this.levels.forEach((level) => {
 			level.recycleEntities();
@@ -36,7 +49,11 @@ export default class Game {
 
 	drainPreviousLevels() {
 		this.levels.forEach((level) => {
-			if (level.isComplete(this.getScore())) level.drainClusters();
+			let completed = false;
+			this.players.forEach((player) => {
+				if (level.isComplete(player.score)) completed = true;
+			});
+			if (completed) level.drainClusters();
 		});
 	}
 
@@ -59,9 +76,11 @@ export default class Game {
 			if (player.position.x <= 0) {
 				player.position.x = 0;
 				player.velocity.x = -player.velocity.x;
+				this.playSound('collision');
 			} else if (player.position.x >= canvas.width - player.size) {
 				player.position.x = canvas.width - player.size;
 				player.velocity.x = -player.velocity.x;
+				this.playSound('collision');
 			}
 		});
 	}
@@ -75,8 +94,13 @@ export default class Game {
 					if (cluster.Entity === Asteroid) {
 						cluster.entities.forEach((entity) => {
 							if (player.collidesWith(entity)) {
+								const wasAlive = player.isAlive();
 								player.resolveCollision(entity);
 								player.takeDamage(entity);
+								this.playSound('collision');
+								if (wasAlive && !player.isAlive()) {
+									this.playSound('death');
+								}
 							}
 						});
 					} else if (cluster.Entity === Star) {
@@ -84,6 +108,7 @@ export default class Game {
 							if (player.collidesWith(entity)) {
 								player.score += entity.score;
 								cluster.resetEntity(entity);
+								this.playSound('star');
 							}
 						});
 					}
@@ -94,7 +119,10 @@ export default class Game {
 
 	handlePlayerPlayerCollision() {
 		const [p1, p2] = this.players;
-		p1.resolveCollision(p2);
+		if (p1.collidesWith(p2)) {
+			p1.resolveCollision(p2);
+			this.playSound('collision');
+		}
 	}
 
 	handlePlayerMovement() {
@@ -135,10 +163,24 @@ export default class Game {
 	}
 
 	updateCurrentLevel() {
+		const previousLevel = this.currentLevel;
+
 		this.levels.forEach((level) => {
-			if (!level.isComplete(this.getScore())) return;
-			this.currentLevel = level.index + 1;
+			this.players.forEach((player) => {
+				if (level.isComplete(player.score) && this.levels[level.index + 1]) this.currentLevel = level.index + 1;
+			});
 		});
+
+		if (this.currentLevel !== previousLevel) this.levels[this.currentLevel].bgOffset = canvas.width;
+	}
+
+	updateLevelBackground() {
+		const currentLevel = this.levels[this.currentLevel];
+
+		if (currentLevel.bgOffset > 0) {
+			currentLevel.bgOffset -= 5;
+			if (currentLevel.bgOffset < 0) currentLevel.bgOffset = 0;
+		}
 	}
 
 	resetGame() {
@@ -148,16 +190,30 @@ export default class Game {
 		this.players.forEach((player) => {
 			player.reset();
 		});
+		this.currentLevel = this.bgOffset = 0;
+		this.winningPlayer = null;
 	}
 
 	updateGameState() {
-		if (this.levels[this.currentLevel].isComplete(this.getScore()) && !this.levels[this.currentLevel + 1]) this.state = 'victory';
+		this.players.forEach((player, i) => {
+			if (this.levels[this.currentLevel].isComplete(player.score) && !this.levels[this.currentLevel + 1]) {
+				if (this.state !== 'victory') {
+					this.winningPlayer = i + 1;
+					this.playSound('victory');
+					this.state = 'victory';
+				}
+			}
+		});
 
 		let bothDead = true;
 		this.players.forEach((player) => {
 			if (player.isAlive() || player.size > 0) bothDead = false;
 		});
-		if (bothDead) this.state = 'defeat';
+
+		if (bothDead && this.state !== 'defeat') {
+			this.playSound('defeat');
+			this.state = 'defeat';
+		}
 
 		if (!keysPressed['enter']) return;
 
@@ -185,6 +241,7 @@ export default class Game {
 		if (this.state !== 'playing') return;
 
 		this.updateCurrentLevel();
+		this.updateLevelBackground();
 		this.updateClusters();
 		this.updatePlayer();
 

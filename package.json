@@ -1,0 +1,19 @@
+{
+  "dependencies": {
+    "vite": "^8.0.5"
+  },
+  "name": "space-evaders",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "repository": {
+    "url": "https://github.com/henrivj/space-evaders"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "description": "Um jogo onde você controla uma nave e desvia de asteroides."
+}
