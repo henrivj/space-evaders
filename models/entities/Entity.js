@@ -7,6 +7,8 @@ export default class Entity {
 		this.sprite = new Image();
 		this.sprite.src = sprite;
 		this.force = 0;
+		this.alive = true;
+		this.rotation = 0;
 	}
 
 	collidesWith(object) {
@@ -45,5 +47,13 @@ export default class Entity {
 		this.velocity.y += (this.force * distanceY * mass2) / mass1;
 		other.velocity.x -= (this.force * distanceX * mass1) / mass2;
 		other.velocity.y -= (this.force * distanceY * mass1) / mass2;
+	}
+
+	handleDestructionAnimation() {
+		if (!this.alive && this.size > 0) {
+			this.size = Math.max(0, this.size - 1);
+			this.rotation += 0.1;
+			this.rotation *= 0.9;
+		}
 	}
 }

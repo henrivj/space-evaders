@@ -1,6 +1,8 @@
 // Game.js
 import { keysPressed } from '../index.js';
 import Level from './Level.js';
+import Asteroid from './entities/Asteroid.js';
+import Star from './entities/Star.js';
 
 export default class Game {
 	constructor(players, levels) {
@@ -21,7 +23,7 @@ export default class Game {
 	getScore() {
 		let score = 0;
 		this.players.forEach((player) => {
-			score += player.score / this.players.length;
+			score += player.score;
 		});
 		return Math.floor(score);
 	}
@@ -38,9 +40,9 @@ export default class Game {
 		});
 	}
 
-	handlePlayerDeath() {
+	handlePlayerDestruction() {
 		this.players.forEach((player) => {
-			player.handleDeathAnimation();
+			player.handleDestructionAnimation();
 		});
 	}
 
@@ -70,12 +72,21 @@ export default class Game {
 				if (index > this.currentLevel) return;
 
 				level.clusters.forEach((cluster) => {
-					cluster.entities.forEach((entity) => {
-						if (player.collidesWith(entity)) {
-							player.resolveCollision(entity);
-							player.takeDamage(entity);
-						}
-					});
+					if (cluster.Entity === Asteroid) {
+						cluster.entities.forEach((entity) => {
+							if (player.collidesWith(entity)) {
+								player.resolveCollision(entity);
+								player.takeDamage(entity);
+							}
+						});
+					} else if (cluster.Entity === Star) {
+						cluster.entities.forEach((entity) => {
+							if (player.collidesWith(entity)) {
+								player.score += Math.floor(entity.size / entity.speed);
+								entity.alive = false;
+							}
+						});
+					}
 				});
 			});
 		});
@@ -110,7 +121,7 @@ export default class Game {
 		this.handlePlayerPlayerCollision();
 		this.handlePlayerEnemyCollision();
 		this.handlePlayerWallCollision();
-		this.handlePlayerDeath();
+		this.handlePlayerDestruction();
 		this.players.forEach((p) => p.update());
 	}
 
@@ -142,7 +153,7 @@ export default class Game {
 
 		let bothDead = true;
 		this.players.forEach((player) => {
-			if (!player.isDead()) bothDead = false;
+			if (!player.isFullyDead()) bothDead = false;
 		});
 		if (bothDead) this.state = 'defeat';
 

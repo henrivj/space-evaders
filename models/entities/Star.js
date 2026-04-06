@@ -1,11 +1,16 @@
 import Entity from './Entity.js';
 import { context } from '../../index.js';
 
-export default class Asteroid extends Entity {
+export default class Star extends Entity {
 	rotationSpeed = Math.random() * (0.01 - 0.001) + 0.001;
 	canBeReset = true;
 
 	update() {
+		if (!this.alive) {
+			this.handleDestructionAnimation();
+			return;
+		}
+
 		if (this.position.x < -this.size) return;
 
 		this.rotation += this.rotationSpeed;

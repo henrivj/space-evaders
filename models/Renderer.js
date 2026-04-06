@@ -54,7 +54,7 @@ export default class Renderer {
 		context.fillStyle = '#fff';
 		context.fillRect(x, y + h - fillH, 20, fillH);
 
-		context.strokeStyle = '#333';
+		context.strokeStyle = '#ffffff80';
 		this.game.levels.forEach((level, i) => {
 			if (i === this.game.levels.length - 1) return;
 			const tickY = y + h - (level.scoreGoal / totalGoal) * h;
@@ -64,7 +64,13 @@ export default class Renderer {
 			context.stroke();
 		});
 
-		this.drawText(Math.floor(this.game.getScore()), { x: x + 10, y: y + h - fillH - 10 }, 10);
+		const scoreText = Math.floor(this.game.getScore());
+		const scoreBoxWidth = 60;
+		const scoreBoxHeight = 24;
+		const scoreBoxX = x - scoreBoxWidth - 10;
+		const scoreBoxY = y + h - fillH - 12;
+		this.drawBox({ x: scoreBoxX, y: scoreBoxY }, { w: scoreBoxWidth, h: scoreBoxHeight }, '#000', '#fff');
+		this.drawText(scoreText, { x: scoreBoxX + scoreBoxWidth / 2, y: scoreBoxY + scoreBoxHeight / 2 + 4 }, 10, '#fff', null, 'center');
 	}
 
 	renderPlayerStatus(player, index) {
