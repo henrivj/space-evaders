@@ -102,6 +102,8 @@ export default class Game {
 			player.direction.x = 0;
 			player.direction.y = 0;
 
+			if (!player.isAlive()) return;
+
 			if (index === 0) {
 				if (keysPressed['w']) player.direction.y -= 1;
 				if (keysPressed['s']) player.direction.y += 1;

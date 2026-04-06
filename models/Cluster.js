@@ -20,10 +20,33 @@ export default class Cluster {
 	}
 
 	getRandomPosition(size) {
+		if (!this.laneQueue || this.laneQueue.length === 0) {
+			let lanes = [];
+			for (let i = 0; i < this.lanes; i++) {
+				lanes.push(i);
+			}
+
+			// fisher-yates
+			for (let i = lanes.length - 1; i > 0; i--) {
+				let j = Math.floor(Math.random() * (i + 1));
+				[lanes[i], lanes[j]] = [lanes[j], lanes[i]];
+			}
+
+			if (lanes[0] === this.lastLane) {
+				[lanes[0], lanes[lanes.length - 1]] = [lanes[lanes.length - 1], lanes[0]];
+			}
+
+			this.laneQueue = lanes;
+		}
+
+		let chosenLane = this.laneQueue.shift();
+		this.lastLane = chosenLane;
+
 		let laneHeight = canvas.height / this.lanes;
+
 		return {
 			x: canvas.width + Math.random() * canvas.width,
-			y: laneHeight * Math.floor(Math.random() * this.lanes) + laneHeight / 2 - size / 2
+			y: laneHeight * chosenLane + laneHeight / 2 - size / 2
 		};
 	}
 

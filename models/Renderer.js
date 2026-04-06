@@ -44,96 +44,126 @@ export default class Renderer {
 	}
 
 	renderScore() {
-		const totalGoal = this.game.levels[this.game.levels.length - 1].scoreGoal;
-		const h = canvas.height * 0.6;
-		const x = canvas.width - 40;
-		const y = (canvas.height - h) / 2;
-		const fillH = h * Math.min(this.game.getScore() / totalGoal, 1);
+		if (this.bgOffset === undefined) {
+			this.bgOffset = 0;
+		}
 
-		this.drawBox({ x, y }, { w: 20, h });
-		context.fillStyle = '#fff';
-		context.fillRect(x, y + h - fillH, 20, fillH);
+		if (this.game.targetBgOffset !== undefined) {
+			this.bgOffset += (this.game.targetBgOffset - this.bgOffset) * 0.1;
+		}
 
-		context.strokeStyle = '#ffffff80';
-		this.game.levels.forEach((level, i) => {
-			if (i === this.game.levels.length - 1) return;
-			const tickY = y + h - (level.scoreGoal / totalGoal) * h;
-			context.beginPath();
-			context.moveTo(x, tickY);
-			context.lineTo(x + 20, tickY);
-			context.stroke();
-		});
+		const finalGoal = this.game.levels[this.game.levels.length - 1].scoreGoal;
+		const barH = canvas.height * 0.6;
+		const barY = (canvas.height - barH) / 2;
+		const barX = canvas.width - 50;
 
-		const scoreText = Math.floor(this.game.getScore());
-		const scoreBoxWidth = 60;
-		const scoreBoxHeight = 24;
-		const scoreBoxX = x - scoreBoxWidth - 10;
-		const scoreBoxY = y + h - fillH - 12;
-		this.drawBox({ x: scoreBoxX, y: scoreBoxY }, { w: scoreBoxWidth, h: scoreBoxHeight }, '#000', '#fff');
-		this.drawText(scoreText, { x: scoreBoxX + scoreBoxWidth / 2, y: scoreBoxY + scoreBoxHeight / 2 + 4 }, 10, '#fff', null, 'center');
+		this.drawBox({ x: barX, y: barY }, { w: 20, h: barH }, '#0a1f0a', '#fff', '#000');
+
+		const p1H = Math.min(this.game.players[0].score / finalGoal, 1) * barH;
+		const p2H = Math.min(this.game.players[1].score / finalGoal, 1) * barH;
+
+		this.drawScoreFills(barX, barY, barH, p1H, p2H);
+		this.drawLevelTicks(barX, barY, barH, finalGoal);
+		this.drawScoreTags(barX, barY, barH, p1H, p2H);
 	}
 
-	renderPlayerStatus(player, index) {
-		const { health, maxHealth, score, sprite } = player;
-		const levels = this.game.levels;
-		const totalGoal = levels[levels.length - 1].scoreGoal;
-		const healthRatio = Math.max(0, health / maxHealth);
-		const scoreRatio = Math.max(0, score / totalGoal);
+	drawScoreFills(barX, barY, barH, p1H, p2H) {
+		context.fillStyle = '#505010';
+		context.fillRect(barX + 2, barY + barH - p1H, 16, p1H);
 
-		const cardW = 250;
-		const cardH = 64;
-		const startX = 20;
+		context.fillStyle = '#F0A840';
+		context.fillRect(barX + 2, barY + barH - p2H, 16, p2H);
 
-		let startY = 20;
-		if (index === 1) {
-			startY = canvas.height - cardH - 20;
+		const overlapH = Math.min(p1H, p2H);
+		if (overlapH > 0) {
+			context.fillStyle = '#A07C28';
+			context.fillRect(barX + 2, barY + barH - overlapH, 16, overlapH);
+		}
+	}
+
+	drawLevelTicks(barX, barY, barH, finalGoal) {
+		context.strokeStyle = '#ffffff60';
+		context.lineWidth = 1;
+		this.game.levels.forEach((level, i) => {
+			if (i === this.game.levels.length - 1) return;
+			const tickY = barY + barH - (level.scoreGoal / finalGoal) * barH + this.bgOffset;
+			context.beginPath();
+			context.moveTo(barX, tickY);
+			context.lineTo(barX + 20, tickY);
+			context.stroke();
+		});
+	}
+
+	drawScoreTags(barX, barY, barH, p1H, p2H) {
+		const positions = [barY + barH - p1H, barY + barH - p2H];
+		let isOverlapping = false;
+
+		if (Math.abs(positions[0] - positions[1]) < 30) {
+			isOverlapping = true;
+			const mid = (positions[0] + positions[1]) / 2;
+			positions[0] = mid - 15;
+			positions[1] = mid + 15;
 		}
 
-		const pos = { x: startX, y: startY };
-		const size = { w: cardW, h: cardH };
-		this.drawBox(pos, size, 'rgba(0,0,0,0.8)', '#fff', 'rgba(255,255,255,0.2)');
-
-		const sSize = 40;
-		const spriteX = startX + 12;
-		const spriteY = startY + (cardH - sSize) / 2;
-		context.drawImage(sprite, spriteX, spriteY, sSize, sSize);
-
-		const infoX = spriteX + sSize + 15;
-		const barW = cardW - (infoX - startX) - 15;
-
-		this.drawText(`PLAYER ${index + 1}`, { x: infoX, y: startY + 18 }, 10, '#fff', null, 'left');
-
-		const hpY = startY + 28;
-		this.drawBox({ x: infoX, y: hpY }, { w: barW, h: 10 }, '#222', '#fff', '#000');
-
-		let hpColor;
-		if (healthRatio <= 0) {
-			hpColor = `rgb(${Math.floor(180 + 75 * Math.abs(Math.sin(Date.now() / 200)))}, 0, 0)`;
-		} else if (healthRatio <= 0.25) {
-			hpColor = '#ff2222';
-		} else if (healthRatio <= 0.5) {
-			hpColor = '#ff8800';
-		} else if (healthRatio <= 0.75) {
-			hpColor = '#ffdd00';
-		} else {
-			hpColor = '#44ff44';
+		let tagCols = [barX - 64, barX - 64];
+		if (isOverlapping) {
+			tagCols = [barX - 88, barX - 64];
 		}
 
-		context.fillStyle = hpColor;
-		context.fillRect(infoX, hpY, barW * healthRatio, 10);
+		this.game.players.forEach((player, i) => {
+			const tY = positions[i];
+			const tTop = tY - 13;
+			const tX = tagCols[i];
 
-		const scY = hpY + 16;
-		this.drawBox({ x: infoX, y: scY }, { w: barW, h: 4 }, '#222', '#888', '#000');
-		context.fillStyle = '#fff';
-		context.fillRect(infoX, scY, barW * scoreRatio, 4);
+			let color = '#505010';
+			if (i !== 0) {
+				color = '#F0A840';
+			}
 
-		const scoreText = Math.floor(score);
-		this.drawText(scoreText, { x: startX + cardW - 12, y: startY + 18 }, 8, '#aaa', null, 'right');
+			context.fillStyle = '#000000';
+			context.beginPath();
+			context.moveTo(tX, tTop);
+			context.lineTo(tX + 44, tTop);
+			context.lineTo(tX + 52, tY);
+			context.lineTo(tX + 44, tTop + 26);
+			context.lineTo(tX, tTop + 26);
+			context.closePath();
+			context.fill();
+
+			context.strokeStyle = color;
+			context.lineWidth = 2;
+			context.stroke();
+
+			context.drawImage(player.sprite, tX + 12, tY - 10, 20, 20);
+		});
 	}
 
 	renderHealth() {
-		this.game.players.forEach((player, i) => {
-			this.renderPlayerStatus(player, i);
+		const barW = 250;
+		const barH = 20;
+		const barX = 20;
+		const barYPositions = [20, canvas.height - 20 - barH];
+
+		this.game.players.forEach((player, playerIndex) => {
+			const fillRatio = Math.max(0, player.health / player.maxHealth);
+			const barY = barYPositions[playerIndex];
+
+			let barColor;
+			if (playerIndex === 0) {
+				barColor = '#505010';
+			} else {
+				barColor = '#F0A840';
+			}
+			if (fillRatio < 0.5) barColor = '#ff9800';
+			if (fillRatio < 0.25) barColor = '#ff4444';
+
+			this.drawBox({ x: barX, y: barY }, { w: barW, h: barH }, '#0a1f0a', '#fff', '#000');
+
+			context.fillStyle = barColor;
+			context.fillRect(barX, barY, barW * fillRatio, barH);
+
+			const spriteSize = 26;
+			context.drawImage(player.sprite, barX + barW * fillRatio - spriteSize / 2, barY + barH / 2 - spriteSize / 2, spriteSize, spriteSize);
 		});
 	}
 
@@ -156,11 +186,9 @@ export default class Renderer {
 		const current = game.levels[game.currentLevel];
 		const prev = game.levels[game.currentLevel - 1];
 
-		if (current.bgOffset > 0 && game.state === 'playing') {
-			current.bgOffset -= (game.players[0].speed + game.players[1].speed) / 2;
-			if (prev) context.drawImage(prev.background, -canvas.width + current.bgOffset, 0, canvas.width, canvas.height);
+		if (current.bgOffset > 0 && prev) {
+			context.drawImage(prev.background, -canvas.width + current.bgOffset, 0, canvas.width, canvas.height);
 		}
-		if (current.bgOffset < 0) current.bgOffset = 0;
 
 		context.drawImage(current.background, current.bgOffset, 0, canvas.width, canvas.height);
 	}
@@ -184,7 +212,6 @@ export default class Renderer {
 			this.renderBackground();
 			this.renderClusters();
 			this.renderPlayers();
-
 			this.renderHealth();
 			this.renderScore();
 		}
@@ -195,7 +222,7 @@ export default class Renderer {
 			const hi = `MAIOR PONTUAÇÃO: ${Number(localStorage.getItem('highScore'))}`;
 			this.renderScreen('SPACE EVADERS', hi, 'PRESSIONE ENTER PARA COMEÇAR', '#fff', 0);
 		} else if (this.game.state === 'victory') {
-			this.renderScreen('VOCÊ VENCEU!', `PONTUAÇÃO FINAL: ${Math.floor(this.game.getScore())}`, 'PRESSIONE ENTER PARA VOLTAR AO MENU', '#33ff33', 0.5);
+			this.renderScreen(`PLAYER ${this.game.winningPlayer} VENCEU!`, null, 'PRESSIONE ENTER PARA VOLTAR AO MENU', '#33ff33', 0.5);
 		} else if (this.game.state === 'defeat') {
 			this.renderScreen('GAME OVER', `PONTUAÇÃO FINAL: ${Math.floor(this.game.getScore())}`, 'PRESSIONE ENTER PARA VOLTAR AO MENU', '#ff4444', 0.5);
 		}
