@@ -59,7 +59,8 @@ export default class Cluster {
 			let speed = this.getRandomSpeed();
 			let position = this.getRandomPosition(size);
 
-			let entity = new this.Entity(position.x, position.y + levelOffset, size, -speed, this.sprite);
+			let entity = new this.Entity(position.x, position.y + levelOffset, size, speed, this.sprite);
+			entity.velocity.x = -speed;
 
 			generatedEntities.push(entity);
 		}
