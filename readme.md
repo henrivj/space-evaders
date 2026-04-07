@@ -6,16 +6,7 @@
 
 ---
 
-## 1. Identificação do Projeto
-
-*   **Título do Projeto:** Space Evaders
-*   **Identificação do desenvolvedor:** Henrique Vieira Justus
-*   **Logotipo/Banner:**
-    ![Logotipo/Banner](https://raw.githubusercontent.com/henrivj/space-evaders/main/public/img/gameplay.png)
-
----
-
-## 2. Visão Geral do Sistema
+## 1. Visão Geral do Sistema
 
 ### Descrição
 Space Evaders é um software de entretenimento do gênero game, desenvolvido em JavaScript puro, que utiliza a API Canvas para renderização 2D diretamente no navegador.
@@ -56,7 +47,7 @@ O jogo está disponível para jogar online em: [https://space-evaders.vercel.app
 
 ---
 
-## 3. Instruções de Instalação e Execução
+## 2. Instruções de Instalação e Execução
 
 Para rodar o projeto localmente, siga os passos abaixo:
 
@@ -78,5 +69,5 @@ Para rodar o projeto localmente, siga os passos abaixo:
 
 ---
 
-## 4. Link do Vercel
+## 3. Link do Vercel
 [Space Evaders em Produção](https://space-evaders.vercel.app)
