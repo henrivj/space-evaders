@@ -1,5 +1,7 @@
+// Level.js
 export default class Level {
-	constructor(scoreGoal, clusters, background) {
+	constructor(index, scoreGoal, clusters, background) {
+		this.index = index;
 		this.scoreGoal = scoreGoal;
 		this.clusters = clusters;
 		this.background = new Image();
@@ -7,7 +9,38 @@ export default class Level {
 		this.bgOffset = 0;
 	}
 
+	reset() {
+		this.clusters.forEach(cluster => {
+			cluster.entities = cluster.generateEntities()
+		})
+		this.bgOffset = 0
+	}
+
+	recycleEntities() {
+		this.clusters.forEach((cluster) => {
+			cluster.recycleEntities()
+		});
+	}
+
 	isComplete(score) {
-		return this.scoreGoal <= score;
+		return score >= this.scoreGoal;
+	}
+
+	drainClusters() {
+		this.clusters.forEach(cluster => {
+			cluster.drain()
+		});
+	}
+
+	updateClusters() {
+		this.clusters.forEach(cluster => {
+			cluster.update()
+		});
+	}
+
+	renderClusters() {
+		this.clusters.forEach(cluster => {
+			cluster.render()
+		});
 	}
 }

@@ -1,49 +1,32 @@
-import Game from './models/Game.js';
-import Renderer from './models/Renderer.js';
-import Level from './models/Level.js';
 import Cluster from './models/Cluster.js';
-
-import Spaceship from './models/entities/Spaceship.js';
 import Asteroid from './models/entities/Asteroid.js';
 import Star from './models/entities/Star.js';
+import { Spaceship } from './models/entities/Spaceship.js';
+
+import Game from './models/Game.js';
+import Renderer from './models/Renderer.js';
 
 export const canvas = document.getElementById('canvas');
 export const context = canvas.getContext('2d');
-// so pra nao ficar passando o canvas toda hora, ja que estou separando as classes
-// nao sei se e boa pratica exportar uma variavel, mas achei legal isso ser uma possibilidade
+export const keysPressed = {};
 
-const keysPressed = {};
-document.addEventListener('keydown', (e) => (keysPressed[e.key] = true));
-document.addEventListener('keyup', (e) => (keysPressed[e.key] = false));
+document.addEventListener('keydown', (e) => {
+	keysPressed[e.key.toLowerCase()] = true;
+});
+document.addEventListener('keyup', (e) => {
+	keysPressed[e.key.toLowerCase()] = false;
+});
 
-const player1 = new Spaceship(50, canvas.height / 3, 7.5, 50, 1, '/img/spaceship0.png');
-const player2 = new Spaceship(50, (canvas.height / 3) * 2, 7.5, 50, 1, '/img/spaceship1.png');
+const spaceshipSize = 50;
+const players = [new Spaceship(spaceshipSize, canvas.height / 3 - spaceshipSize / 2, spaceshipSize, 1, '/img/spaceship0.png'), new Spaceship(spaceshipSize, (canvas.height / 3) * 2 - spaceshipSize / 2, spaceshipSize, 1, '/img/spaceship1.png')];
 
-const levelConfigs = [
-	{
-		scoreGoal: 2500,
-		clusters: [new Cluster(Asteroid, 10, 6, 7, 25, 50, 2, '/img/asteroid.png'), new Cluster(Star, 0, 0, 0, 0, 0, 0, '/img/star.png')],
-		background: '/img/levels/level_1.png'
-	},
-	{
-		scoreGoal: 5000,
-		clusters: [new Cluster(Asteroid, 15, 7, 8, 25, 75, 2, '/img/asteroid.png'), new Cluster(Star, 1, 5, 10, 30, 40, 5, '/img/star.png')],
-		background: '/img/levels/level_2.png'
-	},
-	{
-		scoreGoal: 10000,
-		clusters: [new Cluster(Asteroid, 20, 7, 8, 50, 100, 2, '/img/asteroid.png'), new Cluster(Star, 2, 10, 15, 35, 40, 5, '/img/star.png')],
-		background: '/img/levels/level_3.png'
-	}
+const levels = [
+	{ index: 0, scoreGoal: 500, clusters: [new Cluster(Asteroid, 5, 8, 55, 75, 4, 5, '/img/asteroid.png'), new Cluster(Star, 4, 5, 20, 40, 2, 4, '/img/star.png')], background: '/img/levels/level_1.png' },
+	{ index: 1, scoreGoal: 1000, clusters: [new Cluster(Asteroid, 6, 10, 65, 85, 5, 6, '/img/asteroid.png'), new Cluster(Star, 5, 7, 20, 40, 3, 5, '/img/star.png')], background: '/img/levels/level_2.png' },
+	{ index: 2, scoreGoal: 2000, clusters: [new Cluster(Asteroid, 7, 12, 75, 95, 6, 7, '/img/asteroid.png'), new Cluster(Star, 6, 9, 20, 40, 4, 6, '/img/star.png')], background: '/img/levels/level_3.png' }
 ];
 
-const levels = [];
-for (let i = 0; i < levelConfigs.length; i++) {
-	const config = levelConfigs[i];
-	levels.push(new Level(config.scoreGoal, config.clusters, config.background));
-}
-
-const game = new Game([player1, player2], levels, keysPressed);
+const game = new Game(players, levels);
 const renderer = new Renderer(game);
 
 function main() {

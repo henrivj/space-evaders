@@ -1,34 +1,30 @@
 import Entity from './Entity.js';
-import { canvas, context } from '../../index.js';
+import { context } from '../../index.js';
 
 export default class Star extends Entity {
-	rotation = 0;
+	score = Math.floor(Math.sqrt(this.speed * (this.size ** 2))); // essa formula nao significa nada, so fica bem balanceada
 	rotationSpeed = Math.random() * (0.01 - 0.001) + 0.001;
-	canRespawn = true;
+	canBeReset = true;
 
 	update() {
+		if (!this.isAlive()) {
+			this.handleDestructionAnimation();
+			return;
+		}
+
+		if (this.position.x < -this.size) return;
+
 		this.rotation += this.rotationSpeed;
-		this.posX -= this.speed;
+		this.position.x += this.velocity.x;
+		this.position.y += this.velocity.y;
 	}
 
 	render() {
-		if (this.hasPassedX(-this.size)) return;
+		if (this.position.x < -this.size) return;
 		context.save();
-		context.translate(this.posX + this.size / 2, this.posY + this.size / 2);
+		context.translate(this.position.x + this.size / 2, this.position.y + this.size / 2);
 		context.rotate(this.rotation);
 		context.drawImage(this.sprite, -this.size / 2, -this.size / 2, this.size, this.size);
 		context.restore();
-	}
-
-	reset() {
-		if (!this.canRespawn) return;
-		this.posX = canvas.width * this.spawnOffset + (canvas.width * Math.random()) / 2;
-		this.posY = Math.random() * (canvas.height - this.size);
-	}
-
-	kill() {
-		this.alive = false;
-		this.canRespawn = false;
-		this.posX = -this.size;
 	}
 }

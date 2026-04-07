@@ -1,170 +1,257 @@
+import { keysPressed, canvas } from '../index.js';
+import Level from './Level.js';
 import Asteroid from './entities/Asteroid.js';
 import Star from './entities/Star.js';
-import { canvas } from '../index.js';
 
 export default class Game {
-	constructor(players, levels, keysPressed) {
+	constructor(players, levels) {
 		this.players = players;
-		this.levels = levels;
+		this.levels = this.generateLevels(levels);
 		this.currentLevel = 0;
-		this.score = 0;
 		this.state = 'menu';
-		this.keysPressed = keysPressed;
+		this.winningPlayer = null;
+		this.sounds = {
+			collision: new Audio('/sound/collision.mp3'),
+			star: new Audio('/sound/star.mp3'),
+			death: new Audio('/sound/death.mp3'),
+			defeat: new Audio('/sound/defeat.mp3'),
+			victory: new Audio('/sound/victory.mp3')
+		};
 	}
 
-	reset() {
-		this.currentLevel = 0;
-		this.score = 0;
+	generateLevels(levels) {
+		const generatedLevels = [];
+		levels.forEach((level) => {
+			generatedLevels.push(new Level(level.index, level.scoreGoal, level.clusters, level.background));
+		});
+		return generatedLevels;
+	}
 
+	getScore() {
+		let score = 0;
+		this.players.forEach((player) => {
+			score += player.score;
+		});
+		return Math.floor(score);
+	}
+
+	playSound(soundName) {
+		if (!this.sounds[soundName]) return;
+		this.sounds[soundName].currentTime = 0;
+		this.sounds[soundName].play();
+	}
+
+	recycleEntities() {
 		this.levels.forEach((level) => {
-			level.bgOffset = 0;
-			level.clusters.forEach((cluster) => {
-				cluster.entities = cluster.generateEntities();
+			level.recycleEntities();
+		});
+	}
+
+	drainPreviousLevels() {
+		this.levels.forEach((level) => {
+			let completed = false;
+			this.players.forEach((player) => {
+				if (level.isComplete(player.score)) completed = true;
+			});
+			if (completed) level.drainClusters();
+		});
+	}
+
+	handlePlayerDestruction() {
+		this.players.forEach((player) => {
+			player.handleDestructionAnimation();
+		});
+	}
+
+	handlePlayerWallCollision() {
+		this.players.forEach((player) => {
+			if (!player.isAlive()) return;
+
+			// cima/baixo
+			if (player.position.y < -player.size / 2) {
+				player.position.y += canvas.height;
+			} else if (player.position.y > canvas.height - player.size / 2) {
+				player.position.y -= canvas.height;
+			}
+
+			// esquerda/direita
+			if (player.position.x <= 0) {
+				player.position.x = 0;
+				player.velocity.x = -player.velocity.x;
+				this.playSound('collision');
+			} else if (player.position.x >= canvas.width - player.size) {
+				player.position.x = canvas.width - player.size;
+				player.velocity.x = -player.velocity.x;
+				this.playSound('collision');
+			}
+		});
+	}
+
+	handlePlayerEnemyCollision() {
+		this.players.forEach((player) => {
+			if (!player.isAlive()) return;
+
+			this.levels.forEach((level, index) => {
+				if (index > this.currentLevel) return;
+
+				level.clusters.forEach((cluster) => {
+					if (cluster.Entity === Asteroid) {
+						cluster.entities.forEach((entity) => {
+							if (player.collidesWith(entity)) {
+								const wasAlive = player.isAlive();
+								player.resolveCollision(entity);
+								player.takeDamage(entity);
+								this.playSound('collision');
+								if (wasAlive && !player.isAlive()) {
+									this.playSound('death');
+								}
+							}
+						});
+					} else if (cluster.Entity === Star) {
+						cluster.entities.forEach((entity) => {
+							if (player.collidesWith(entity) && entity.isAlive()) {
+								player.score += entity.score;
+								entity.health = 0;
+								this.playSound('star');
+							}
+						});
+					}
+				});
 			});
 		});
-
-		this.players.forEach((player, index) => {
-			player.reset(index);
-		});
 	}
 
-	update() {
-		this.handleGameState();
+	handlePlayerPlayerCollision() {
+		const [p1, p2] = this.players;
+		if (!p1.isAlive() || !p2.isAlive()) return;
 
-		if (this.state !== 'playing') return;
-
-		this.handlePlayerMovement();
-
-		this.players.forEach((player) => {
-			player.update();
-		});
-
-		this.handlePlayerDeath();
-		this.handleLevelTransition();
-		this.handlePreviousLevels();
-		this.handleCurrentLevel();
-	}
-
-	handleGameState() {
-		if (!this.keysPressed['Enter']) return;
-		this.keysPressed['Enter'] = false;
-
-		switch (this.state) {
-			case 'victory':
-			case 'defeat':
-				this.state = 'menu';
-				break;
-			case 'menu':
-				this.reset();
-				this.state = 'playing';
-				break;
-			case 'paused':
-				this.state = 'playing';
-				break;
-			case 'playing':
-				this.state = 'paused';
-				break;
+		if (p1.collidesWith(p2)) {
+			p1.resolveCollision(p2);
+			this.playSound('collision');
 		}
 	}
 
 	handlePlayerMovement() {
-		const w = this.keysPressed['w'];
-		const s = this.keysPressed['s'];
-		const arrowUp = this.keysPressed['ArrowUp'];
-		const arrowDown = this.keysPressed['ArrowDown'];
+		this.players.forEach((player, index) => {
+			player.direction.x = 0;
+			player.direction.y = 0;
 
-		if ((w && s) || (!w && !s)) this.players[0].direction = 0;
-		else if (w) this.players[0].direction = -1;
-		else if (s) this.players[0].direction = 1;
+			if (!player.isAlive()) return;
 
-		if ((arrowUp && arrowDown) || (!arrowUp && !arrowDown)) this.players[1].direction = 0;
-		else if (arrowUp) this.players[1].direction = -1;
-		else if (arrowDown) this.players[1].direction = 1;
-
-		if (this.players[0].collidesWith(this.players[1])) {
-			const p0 = this.players[0];
-			const p1 = this.players[1];
-			const isP0Above = p0.posY < p1.posY;
-
-			// nao deixa p0 passar p1
-			if (isP0Above && p0.direction === 1) p0.direction = 0;
-			if (!isP0Above && p0.direction === -1) p0.direction = 0;
-
-			// nao deixa p1 passar p0
-			if (isP0Above && p1.direction === -1) p1.direction = 0;
-			if (!isP0Above && p1.direction === 1) p1.direction = 0;
-		}
-	}
-
-	handleLevelTransition() {
-		if (!this.levels[this.currentLevel].isComplete(this.score)) return;
-
-		this.levels[this.currentLevel].clusters.forEach((cluster) => cluster.drain());
-
-		if (this.levels[this.currentLevel + 1]) {
-			this.currentLevel++;
-			this.levels[this.currentLevel].bgOffset = canvas.width;
-		} else {
-			this.state = 'victory';
-			if (this.score > localStorage.getItem('highScore')) {
-				localStorage.setItem('highScore', this.score);
+			if (index === 0) {
+				if (keysPressed['w']) player.direction.y -= 1;
+				if (keysPressed['s']) player.direction.y += 1;
+				if (keysPressed['a']) player.direction.x -= 1;
+				if (keysPressed['d']) player.direction.x += 1;
+			} else if (index === 1) {
+				if (keysPressed['arrowup']) player.direction.y -= 1;
+				if (keysPressed['arrowdown']) player.direction.y += 1;
+				if (keysPressed['arrowleft']) player.direction.x -= 1;
+				if (keysPressed['arrowright']) player.direction.x += 1;
 			}
-		}
+		});
 	}
 
-	processLevel(level, isCurrentLevel) {
-		level.clusters.forEach((cluster) => {
-			cluster.entities.forEach((entity) => {
-				this.players.forEach((player) => {
-					if (player.collidesWith(entity)) {
-						if (cluster.EntityType === Star) {
-							player.health = Math.min(player.health + Math.trunc(entity.size * cluster.spawnOffset), player.maxHealth);
-							this.score += 1000;
-						} else {
-							player.health = Math.max(player.health - Math.trunc(entity.size), 0);
-						}
+	updatePlayers() {
+		this.handlePlayerMovement();
+		this.handlePlayerPlayerCollision();
+		this.handlePlayerEnemyCollision();
+		this.handlePlayerWallCollision();
+		this.handlePlayerDestruction();
+		this.players.forEach((p) => p.update());
+	}
 
-						if (isCurrentLevel) {
-							entity.reset();
-						} else {
-							entity.kill();
-						}
-					}
-				});
+	updateClusters() {
+		this.levels.forEach((level, index) => {
+			if (index > this.currentLevel) return;
+			level.updateClusters();
+		});
+	}
 
-				if (entity.alive && entity.hasPassedX(0)) {
-					if (cluster.EntityType === Asteroid && entity.alive) {
-						this.score += Math.trunc(entity.size);
-					}
-					if (isCurrentLevel) {
-						entity.reset();
-					} else {
-						entity.kill();
-					}
-				}
+	updateCurrentLevel() {
+		const previousLevel = this.currentLevel;
+
+		this.levels.forEach((level) => {
+			this.players.forEach((player) => {
+				if (level.isComplete(player.score) && this.levels[level.index + 1]) this.currentLevel = level.index + 1;
 			});
 		});
 
-		level.clusters.forEach((cluster) => cluster.update());
+		if (this.currentLevel !== previousLevel) this.levels[this.currentLevel].bgOffset = canvas.width;
 	}
 
-	handlePlayerDeath() {
-		this.players.forEach((player) => {
-			if (player.health <= 0) {
-				this.state = 'defeat';
+	updateLevelBackground() {
+		const currentLevel = this.levels[this.currentLevel];
 
-				if (this.score > localStorage.getItem('highScore')) {
-					localStorage.setItem('highScore', this.score);
+		if (currentLevel.bgOffset > 0) {
+			currentLevel.bgOffset -= 5;
+			if (currentLevel.bgOffset < 0) currentLevel.bgOffset = 0;
+		}
+	}
+
+	resetGame() {
+		this.levels.forEach((level) => {
+			level.reset();
+		});
+		this.players.forEach((player) => {
+			player.reset();
+		});
+		this.currentLevel = this.bgOffset = 0;
+		this.winningPlayer = null;
+	}
+
+	updateGameState() {
+		this.players.forEach((player, i) => {
+			if (this.levels[this.currentLevel].isComplete(player.score) && !this.levels[this.currentLevel + 1]) {
+				if (this.state !== 'victory') {
+					this.winningPlayer = i;
+					this.playSound('victory');
+					this.state = 'victory';
 				}
 			}
 		});
+
+		let bothDead = true;
+		this.players.forEach((player) => {
+			if (player.isAlive() || player.size > 0) bothDead = false;
+		});
+
+		if (bothDead && this.state !== 'defeat') {
+			this.playSound('defeat');
+			this.state = 'defeat';
+		}
+
+		if (!keysPressed['enter']) return;
+
+		switch (this.state) {
+			case 'playing':
+				this.state = 'pause';
+				break;
+			case 'pause':
+			case 'menu':
+				this.state = 'playing';
+				break;
+			case 'victory':
+			case 'defeat':
+				this.resetGame();
+				this.state = 'menu';
+				break;
+		}
+
+		keysPressed['enter'] = false;
 	}
 
-	handleCurrentLevel() {
-		this.processLevel(this.levels[this.currentLevel], true);
-	}
+	update() {
+		this.updateGameState();
 
-	handlePreviousLevels() {
-		for (let i = 0; i < this.currentLevel; i++) this.processLevel(this.levels[i], false);
+		if (this.state !== 'playing') return;
+
+		this.updateCurrentLevel();
+		this.updateLevelBackground();
+		this.updateClusters();
+		this.updatePlayers();
+
+		this.drainPreviousLevels();
+		this.recycleEntities();
 	}
 }

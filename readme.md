@@ -1,144 +1,82 @@
 # Space Evaders
 
-![gameplay](https://raw.githubusercontent.com/henrivj/space-evaders/main/public/img/gameplay.png)
+**Desenvolvedor:** Henrique Vieira Justus
 
-- **Desenvolvedor:** Henrique Vieira Justus
+![Logotipo/Banner](https://raw.githubusercontent.com/henrivj/space-evaders/main/public/img/gameplay.png)
+
+---
+
+## 1. Identificação do Projeto
+
+*   **Título do Projeto:** Space Evaders
+*   **Identificação do desenvolvedor:** Henrique Vieira Justus
+*   **Logotipo/Banner:**
+    ![Logotipo/Banner](https://raw.githubusercontent.com/henrivj/space-evaders/main/public/img/gameplay.png)
 
 ---
 
 ## 2. Visão Geral do Sistema
 
 ### Descrição
-
-Space Evaders é um jogo 2D em JavaScript que roda diretamente no navegador usando a API Canvas. O jogador controla naves espaciais e deve sobreviver a obstáculos enquanto coleta itens para aumentar a pontuação.
+Space Evaders é um software de entretenimento do gênero game, desenvolvido em JavaScript puro, que utiliza a API Canvas para renderização 2D diretamente no navegador.
 
 ### Objetivo
-
-O objetivo do jogo é completar 3 fases consecutivas, evitando colisões com asteroides e coletando estrelas para aumentar a pontuação e recuperar vida, até alcançar a vitória final.
+A finalidade do game é proporcionar uma experiência de sobrevivência e reflexos, onde o jogador deve pilotar uma nave espacial através de campos de asteroides perigosos.
 
 ### Tema
-
-Corrida espacial: os jogadores pilotam naves evitando obstáculos e coletando estrelas, enfrentando dificuldade crescente e cenários diferentes a cada fase.
+O jogo possui o tema de **Corrida e Sobrevivência Espacial**. O objetivo principal é completar 3 fases distintas, evitando colisões fatais com obstáculos enquanto coleta recursos para pontuar e se manter vivo.
 
 ### Instruções de Jogabilidade
+O jogo pode ser jogado por um ou dois jogadores simultâneos:
 
-- **Movimento do jogador:**
-  - Player 1: `W` (cima), `S` (baixo)
-  - Player 2: `ArrowUp` (cima), `ArrowDown` (baixo)
-- **Coletáveis:**
-  - **Estrela**: aumenta vida e concede +1000 pontos
-- **Obstáculos:**
-  - **Asteroide**: reduz a vida da nave ao colidir, gera pontuação baseada no tamanho
+*   **Player 1:**
+    *   `W`: Mover para cima
+    *   `A`: Mover para esquerda
+    *   `S`: Mover para baixo
+    *   `D`: Mover para direita
+*   **Player 2:**
+    *   `Setas do teclado`: Movimentação em todas as direções
+
+**Coletáveis e Obstáculos:**
+*   **Estrela (⭐):** Colete para ganhar pontos.
+*   **Asteroides (🌑):** Colidir com um asteroide reduz a vida da nave. Asteroides maiores causam mais dano.
 
 ### Especificações Técnicas
+*   **Vidas:** Cada jogador inicia com 100 de vida.
+*   **Pontuação:** Baseada na coleta de estrelas e na sobrevivência contra asteroides.
+*   **Progressão:** O jogo possui 3 fases com dificuldade crescente (aumento na velocidade dos obstáculos e na densidade do campo de asteroides).
+*   **Motor:** Baseado em `requestAnimationFrame` para garantir 60 FPS estáveis.
 
-- **Sistema de pontuação:** Colisão com estrelas (+1000), asteroides dão pontos de acordo com o tamanho
-- **Sistema de vidas:** Cada nave começa com 3 vidas; colisões com asteroides reduzem 1 vida
-- **Progressão de fases:** 3 fases, aumento de velocidade e quantidade de obstáculos, fundos diferentes
-- **Loop de jogo:** Controlado via `requestAnimationFrame()` garantindo 60 FPS
-- **Tela de HUD:** Mostra barra de vida e barra de pontuação proporcional à meta da fase
+### Créditos
+*   **Aluno:** Henrique Vieira Justus
+*   **Product Owner (Professor Orientador):** Carlos Roberto da Silva Filho
 
-### Regras de Negócio
-
-1. **Dificuldade Progressiva (RN01):** A cada fase, a velocidade e quantidade de inimigos aumentam
-2. **Troca de Cenário (RN02):** Cada fase possui fundo diferente para indicar evolução
-3. **Vitória (RN03):** O jogador vence apenas ao completar a terceira fase com pelo menos 1 vida
-4. **Manual de Instruções (RN04):** Tela explicando teclas de comando, sistema de pontuação e coletáveis
-
-### Telas do jogo
-
-- Menu Inicial
-- Tela de Jogo
-- Tela de Pausa
-- Tela de Vitória
-- Tela de Derrota
-- Tela "Sobre" com dados do desenvolvedor e do orientador
+### Link de Produção
+O jogo está disponível para jogar online em: [https://space-evaders.vercel.app](https://space-evaders.vercel.app)
 
 ---
 
-## 3. Requisitos Funcionais
+## 3. Instruções de Instalação e Execução
 
-| Código | Requisito                                                    |
-| ------ | ------------------------------------------------------------ |
-| RF01   | Movimentação vertical das naves                              |
-| RF02   | Sistema de vidas para cada jogador                           |
-| RF03   | Sistema de pontuação baseado em colisões e obstáculos        |
-| RF04   | Itens colecionáveis que aumentam pontuação e vida            |
-| RF05   | Progressão automática de 3 fases com dificuldade crescente   |
-| RF06   | Interface com telas de menu, jogo, vitória/derrota e "Sobre" |
+Para rodar o projeto localmente, siga os passos abaixo:
 
----
-
-## 4. Requisitos Não Funcionais
-
-| Código | Requisito                                          |
-| ------ | -------------------------------------------------- |
-| RNF01  | Desenvolvido em JavaScript puro (ES6+)             |
-| RNF02  | Portável, roda diretamente em navegadores modernos |
-| RNF03  | Interface projetada para resolução de 1920x1080 px |
-| RNF04  | Desempenho consistente com 60 FPS usando Canvas 2D |
+1.  **Clonagem:**
+    ```bash
+    git clone https://github.com/henrivj/space-evaders.git
+    ```
+2.  **Instalação de Dependências:**
+    Certifique-se de ter o Node.js instalado. No diretório do projeto, execute:
+    ```bash
+    npm install
+    ```
+3.  **Execução do Projeto:**
+    Para iniciar o servidor de desenvolvimento local (Vite):
+    ```bash
+    npm run dev
+    ```
+    O terminal informará o endereço local (geralmente `http://localhost:5173`) para abrir no navegador.
 
 ---
 
-## 5. Estrutura de Arquivos
-```
-
-/public
-/img
-/levels
-level_1.png
-level_2.png
-level_3.png
-spaceship0.png
-spaceship1.png
-asteroid.png
-star.png
-index.html
-index.css
-index.js
-/models
-Game.js
-Renderer.js
-Level.js
-Cluster.js
-/entities
-Entity.js
-Spaceship.js
-Asteroid.js
-Star.js
-README.md
-
-````
-
----
-
-## 6. Instruções de Instalação e Execução
-
-1. **Clonagem do repositório:**
-```bash
-git clone https://github.com/henrivj/space-evaders.git
-````
-
-2. **Instalação de dependências:**
-
-```bash
-npm install
-```
-
-3. **Execução do projeto:**
-
-- Abra `index.html` no navegador **ou** rode um servidor local, ex:
-
-```bash
-npx serve .
-```
-
-4. **Link de produção:**
-   [Space Evaders Online](https://vercel-link-do-jogo)
-
----
-
-## 7. Créditos
-
-- Desenvolvedor: Henrique Vieira Justus
-- Orientador: Carlos Robeto da Silva Filho
+## 4. Link do Vercel
+[Space Evaders em Produção](https://space-evaders.vercel.app)
