@@ -9,15 +9,15 @@ export default class Level {
 	}
 
 	reset() {
-		this.clusters.forEach(cluster => {
-			cluster.entities = cluster.generateEntities()
-		})
-		this.bgOffset = 0
+		this.clusters.forEach((cluster) => {
+			cluster.entities = cluster.generateEntities();
+		});
+		this.bgOffset = 0;
 	}
 
 	recycleEntities() {
 		this.clusters.forEach((cluster) => {
-			cluster.recycleEntities()
+			cluster.recycleEntities();
 		});
 	}
 
@@ -26,20 +26,20 @@ export default class Level {
 	}
 
 	drainClusters() {
-		this.clusters.forEach(cluster => {
-			cluster.drain()
+		this.clusters.forEach((cluster) => {
+			cluster.drain();
 		});
 	}
 
 	updateClusters() {
-		this.clusters.forEach(cluster => {
-			cluster.update()
+		this.clusters.forEach((cluster) => {
+			cluster.update();
 		});
 	}
 
 	renderClusters() {
-		this.clusters.forEach(cluster => {
-			cluster.render()
+		this.clusters.forEach((cluster) => {
+			cluster.render();
 		});
 	}
 }

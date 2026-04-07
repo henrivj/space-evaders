@@ -1,62 +1,61 @@
 <!doctype html>
 <html lang="pt-BR">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Space Evaders</title>
 
-<head>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>Space Evaders</title>
+		<link rel="stylesheet" href="/src/index.css" />
+		<link rel="shortcut icon" href="public/img/asteroid.png" type="image/png" />
 
-	<link rel="stylesheet" href="/src/index.css" />
-	<script type="module" src="/src/index.js"></script>
-</head>
+		<script type="module" src="/src/index.js"></script>
+	</head>
 
-<body>
-	<canvas width="1280" height="720" id="canvas"></canvas>
+	<body>
+		<canvas width="1280" height="720" id="canvas"></canvas>
 
-	<aside>
-		<div class="sidebar-content">
-			<section>
-				<h2>OBJETIVO</h2>
-				<ul class="mission-list">
-					<li>> Desvie dos asteroides</li>
-					<li>> Colete estrelas</li>
-					<li>> Sobreviva 3 níveis</li>
-				</ul>
-			</section>
+		<aside>
+			<div class="sidebar-content">
+				<section>
+					<h2>OBJETIVO</h2>
+					<ul class="mission-list">
+						<li>> Desvie dos asteroides</li>
+						<li>> Colete estrelas</li>
+						<li>> Sobreviva 3 níveis</li>
+					</ul>
+				</section>
 
-			<section>
-				<h2>CONTROLES</h2>
+				<section>
+					<h2>CONTROLES</h2>
 
-				<div class="controls-grid">
-					<p>AÇÃO</p>
-					<div class="controls-wrapper">
-						<span class="key" id="enter">Enter</span>
+					<div class="controls-grid">
+						<p>AÇÃO</p>
+						<div class="controls-wrapper">
+							<span class="key" id="enter">Enter</span>
+						</div>
+
+						<p>Jogador 1</p>
+						<div class="key-cluster controls-wrapper">
+							<span class="key key-square key-up" id="w">W</span>
+							<span class="key key-square key-left" id="a">A</span>
+							<span class="key key-square" id="s">S</span>
+							<span class="key key-square" id="d">D</span>
+						</div>
+
+						<p>Jogador 2</p>
+						<div class="key-cluster controls-wrapper">
+							<span class="key key-square arrow key-up" id="arrowup">⬆</span>
+							<span class="key key-square arrow key-left" id="arrowleft">⬅</span>
+							<span class="key key-square arrow" id="arrowdown">⬇</span>
+							<span class="key key-square arrow" id="arrowright">➡</span>
+						</div>
 					</div>
+				</section>
+			</div>
 
-					<p>Jogador 1</p>
-					<div class="key-cluster controls-wrapper">
-						<span class="key key-square key-up" id="w">W</span>
-						<span class="key key-square key-left" id="a">A</span>
-						<span class="key key-square" id="s">S</span>
-						<span class="key key-square" id="d">D</span>
-					</div>
-
-					<p>Jogador 2</p>
-					<div class="key-cluster controls-wrapper">
-						<span class="key key-square arrow key-up" id="arrowup">⬆</span>
-						<span class="key key-square arrow key-left" id="arrowleft">⬅</span>
-						<span class="key key-square arrow" id="arrowdown">⬇</span>
-						<span class="key key-square arrow" id="arrowright">➡</span>
-					</div>
-				</div>
-			</section>
-		</div>
-
-		<footer>
-			<p>Feito por <a href="https://github.com/henrivj/space-evaders" target="_blank"
-					rel="noopener noreferrer">hvjustus</a></p>
-		</footer>
-	</aside>
-</body>
-
+			<footer>
+				<p>Feito por <a href="https://github.com/henrivj/space-evaders" target="_blank" rel="noopener noreferrer">hvjustus</a></p>
+			</footer>
+		</aside>
+	</body>
 </html>

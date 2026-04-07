@@ -45,21 +45,22 @@ export default class Cluster {
 		let laneHeight = canvas.height / this.lanes;
 
 		return {
-			x: canvas.width + Math.random() * canvas.width,
+			x: canvas.width + canvas.width * Math.random(),
 			y: laneHeight * chosenLane + laneHeight / 2 - size / 2
 		};
 	}
 
 	generateEntities() {
-		let generatedEntities = [];
+		const generatedEntities = [];
+		const levelOffset = canvas.width;
 
 		for (let i = 0; i < this.quantity; i++) {
 			let size = this.getRandomSize();
 			let speed = this.getRandomSpeed();
 			let position = this.getRandomPosition(size);
 
-			let entity = new this.Entity(position.x, position.y, size, speed, this.sprite);
-			entity.velocity.x = -speed;
+			let entity = new this.Entity(position.x, position.y + levelOffset, size, -speed, this.sprite);
+
 			generatedEntities.push(entity);
 		}
 
