@@ -32,7 +32,7 @@ const renderer = new Renderer(game);
 function main() {
 	game.update();
 	renderer.render();
-	requestAnimationFrame(main);
+	// requestAnimationFrame(main); eu sei que o certo é o requestAnimationFrame, mas ele precisa sempre rodar a 60fps se nao fica MUITO rápido
 }
 
-main();
+setInterval(main, 1000 / 60);

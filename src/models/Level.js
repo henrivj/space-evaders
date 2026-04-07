@@ -1,4 +1,3 @@
-// Level.js
 export default class Level {
 	constructor(index, scoreGoal, clusters, background) {
 		this.index = index;
