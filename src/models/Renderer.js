@@ -44,7 +44,6 @@ export default class Renderer {
 	}
 
 	renderScore() {
-
 		const finalGoal = this.game.levels[this.game.levels.length - 1].scoreGoal;
 		const barH = canvas.height * 0.6;
 		const barY = (canvas.height - barH) / 2;
@@ -212,10 +211,9 @@ export default class Renderer {
 		if (this.game.state === 'pause') {
 			this.renderScreen('JOGO PAUSADO', null, 'PRESSIONE ENTER PARA DESPAUSAR', '#fff', 0.75);
 		} else if (this.game.state === 'menu') {
-			const hi = `MAIOR PONTUAÇÃO: ${Number(localStorage.getItem('highScore'))}`;
-			this.renderScreen('SPACE EVADERS', hi, 'PRESSIONE ENTER PARA COMEÇAR', '#fff', 0);
+			this.renderScreen('SPACE EVADERS', null, 'PRESSIONE ENTER PARA COMEÇAR', '#fff', 0);
 		} else if (this.game.state === 'victory') {
-			this.renderScreen(`PLAYER ${this.game.winningPlayer} VENCEU!`, null, 'PRESSIONE ENTER PARA VOLTAR AO MENU', '#33ff33', 0.5);
+			this.renderScreen(`PLAYER ${this.game.winningPlayer + 1} VENCEU!`, null, 'PRESSIONE ENTER PARA VOLTAR AO MENU', '#33ff33', 0.5);
 		} else if (this.game.state === 'defeat') {
 			this.renderScreen('GAME OVER', `PONTUAÇÃO FINAL: ${Math.floor(this.game.getScore())}`, 'PRESSIONE ENTER PARA VOLTAR AO MENU', '#ff4444', 0.5);
 		}

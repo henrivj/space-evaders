@@ -68,8 +68,11 @@ export default class Cluster {
 
 	recycleEntities() {
 		this.entities.forEach((entity) => {
-			if (entity.position.x > -entity.size || entity.canBeReset === false || !entity.isAlive()) return;
-			this.resetEntity(entity);
+			if (entity.canBeReset === false) return;
+
+			if (entity.position.x <= -entity.size || (!entity.isAlive() && entity.size <= 0)) {
+				this.resetEntity(entity);
+			}
 		});
 	}
 

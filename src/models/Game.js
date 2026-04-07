@@ -65,6 +65,8 @@ export default class Game {
 
 	handlePlayerWallCollision() {
 		this.players.forEach((player) => {
+			if (!player.isAlive()) return;
+
 			// cima/baixo
 			if (player.position.y < -player.size / 2) {
 				player.position.y += canvas.height;
@@ -87,6 +89,8 @@ export default class Game {
 
 	handlePlayerEnemyCollision() {
 		this.players.forEach((player) => {
+			if (!player.isAlive()) return;
+
 			this.levels.forEach((level, index) => {
 				if (index > this.currentLevel) return;
 
@@ -105,9 +109,9 @@ export default class Game {
 						});
 					} else if (cluster.Entity === Star) {
 						cluster.entities.forEach((entity) => {
-							if (player.collidesWith(entity)) {
+							if (player.collidesWith(entity) && entity.isAlive()) {
 								player.score += entity.score;
-								cluster.resetEntity(entity);
+								entity.health = 0;
 								this.playSound('star');
 							}
 						});
@@ -119,6 +123,8 @@ export default class Game {
 
 	handlePlayerPlayerCollision() {
 		const [p1, p2] = this.players;
+		if (!p1.isAlive() || !p2.isAlive()) return;
+
 		if (p1.collidesWith(p2)) {
 			p1.resolveCollision(p2);
 			this.playSound('collision');
@@ -146,7 +152,7 @@ export default class Game {
 		});
 	}
 
-	updatePlayer() {
+	updatePlayers() {
 		this.handlePlayerMovement();
 		this.handlePlayerPlayerCollision();
 		this.handlePlayerEnemyCollision();
@@ -198,7 +204,7 @@ export default class Game {
 		this.players.forEach((player, i) => {
 			if (this.levels[this.currentLevel].isComplete(player.score) && !this.levels[this.currentLevel + 1]) {
 				if (this.state !== 'victory') {
-					this.winningPlayer = i + 1;
+					this.winningPlayer = i;
 					this.playSound('victory');
 					this.state = 'victory';
 				}
@@ -243,7 +249,7 @@ export default class Game {
 		this.updateCurrentLevel();
 		this.updateLevelBackground();
 		this.updateClusters();
-		this.updatePlayer();
+		this.updatePlayers();
 
 		this.drainPreviousLevels();
 		this.recycleEntities();

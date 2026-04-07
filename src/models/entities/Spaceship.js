@@ -18,7 +18,6 @@ export class Spaceship extends Entity {
 	takeDamage(entity) {
 		const damage = this.calculateCollisionDamage(entity);
 		this.health = Math.max(this.health - damage, 0);
-		return damage;
 	}
 
 	reset() {
@@ -29,14 +28,6 @@ export class Spaceship extends Entity {
 		this.position.y = this.startPosition.y;
 		this.velocity = { x: 0, y: 0 };
 		this.rotation = 0;
-	}
-
-	handleDestructionAnimation() {
-		super.handleDestructionAnimation();
-		if (!this.isAlive() && this.size > 0) {
-			this.position.x += Math.random();
-			this.position.y += Math.random();
-		}
 	}
 
 	update() {
